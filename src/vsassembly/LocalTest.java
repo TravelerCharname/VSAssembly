@@ -39,6 +39,7 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        // try to commit this comment
         try {
             //        charTest();
             ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);

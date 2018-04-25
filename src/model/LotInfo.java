@@ -12,6 +12,8 @@ import java.util.ArrayList;
  * @author LM&L
  */
 public class LotInfo {
+    // try to commit this comment
+    // and finish this
     private Product prod;
     private String lotNumber;
     private int total;
