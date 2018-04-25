@@ -34,7 +34,7 @@ public class AssayBarcode {
 
     }
 
-    public AssayBarcode(String pillarPlateBarcode) {
+    public AssayBarcode (String pillarPlateBarcode) {
         Product temp = null;
         for (Product p : Product.values()) {
             if (!pillarPlateBarcode.toUpperCase().startsWith(namePrefix)) {
@@ -59,7 +59,7 @@ public class AssayBarcode {
             but how to tell 1st lot from 10th lot?
              */
             String s = pillarPlateBarcode.toUpperCase();
-            s = s.replaceFirst(temp.prefix, plateId);
+            s = s.replaceFirst(s, temp.prefix);
 //            char[] chars = s.toCharArray();
 //            int begin=0;
 //            for(int i=0;i<s.length();i++){
@@ -78,6 +78,59 @@ public class AssayBarcode {
         }
     }
 
+    public static AssayBarcode instanceFromBarcode(String pillarPlateBarcode) {
+        if(null==pillarPlateBarcode) return null;
+        AssayBarcode ab=new AssayBarcode();
+        for (Product p : Product.values()) {
+            if (!pillarPlateBarcode.toUpperCase().startsWith(p.prefix)) {
+                continue;
+            }
+            ab.product = p;
+            ab.namePrefix=p.prefix;
+            ab.validPref = true;
+            break;
+        }
+        if (null == ab.product) {
+            ab.product = Product.TST;
+//            ab.validPref = false;
+        }
+//        this.product = temp;
+
+        if (Product.TST.equals(ab.product)) {
+            ab.plateId = pillarPlateBarcode;
+        } else {
+            /*
+            try split with 00
+            production plate should all have a shape like XXX001001000ddd
+            
+            but how to tell 1st lot from 10th lot?
+             */
+            String s = pillarPlateBarcode.toUpperCase();
+            s = s.replaceFirst(ab.product.prefix,"");
+            
+//            char[] chars = s.toCharArray();
+//            int begin=0;
+//            for(int i=0;i<s.length();i++){
+//                String s1=new String(chars, begin, i-begin);
+//            }
+            int mark;
+            mark = s.length() - VAL_PLATE_DIGITS;
+            try{if (s.startsWith("8")) {
+                ab.lotNumber = s.substring(0, 4);
+                ab.batchNumber = s.substring(4, mark);
+            } else {
+                ab.lotNumber = s.substring(0, 3);
+                ab.batchNumber = s.substring(3, mark);
+            }}catch(java.lang.StringIndexOutOfBoundsException e){
+                System.out.println(pillarPlateBarcode+" izzue");
+            }
+            ab.plateId = s.substring(mark);
+            
+            ab.validateDigits();
+        }
+        return ab;
+    }
+    
     public String formAssayBarcode() {
         return namePrefix + lotNumber + batchNumber + plateId;
     }
@@ -87,25 +140,31 @@ public class AssayBarcode {
     }
 
     public boolean isValid() {
-        Product product = getProduct();
+//        Product product = getProduct();
         if (null == product) {
             return false;
         }
-        if (Product.TST == product) //potentially be able to check N01, be able to format TST barcode
+        if (Product.TST.equals(product)) //potentially be able to check N01, be able to format TST barcode
         {
             return true;
         }
+//        validateDigits();
+        return this.validPref&&this.validbatchNumber&&this.validlotNumber&&this.validplateId;
+    }
+
+    private void validateDigits() {
         // production plates
-        if (VAL_LOT_DIGITS != lotNumber.length()) {
-            return false;
+        if (VAL_LOT_DIGITS == lotNumber.length()) {
+            this.validlotNumber=true;
+        }else if(4 == lotNumber.length()){
+            this.validlotNumber=this.lotNumber.startsWith("8");
         }
-        if (VAL_BATCH_DIGITS != batchNumber.length()) {
-            return false;
+        if (VAL_BATCH_DIGITS == batchNumber.length()) {
+            this.validbatchNumber=true;
         }
-        if (VAL_PLATE_DIGITS != plateId.length()) {
-            return false;
+        if (VAL_PLATE_DIGITS == plateId.length()) {
+            this.validplateId=true;
         }
-        return true;
     }
 
     /*
@@ -124,7 +183,14 @@ public class AssayBarcode {
         }
         return false;
     }
-    public static final int VAL_PLATE_DIGITS = 6;
+    public static final int VAL_PLATE_DIGITS = 7;
     public static final int VAL_BATCH_DIGITS = 3;
-    public static final int VAL_LOT_DIGITS = 4;
+    public static final int VAL_LOT_DIGITS = 3; // with legit exception of 4 digits 8003
+
+    @Override
+    public String toString() {
+        return "AssayBarcode{" + "namePrefix=" + namePrefix + ", lotNumber=" + lotNumber + ", batchNumber=" + batchNumber + ", plateId=" + plateId + ", product=" + product + ", validPref=" + validPref + ", validlotNumber=" + validlotNumber + ", validbatchNumber=" + validbatchNumber + ", validplateId=" + validplateId + '}';
+    }
+    
+    
 }
