@@ -11,4 +11,20 @@ package event;
  */
 public class happy {
     String happy;
+    /*
+    1. lot prop
+    2. batch prop
+    3. ui
+    */
+            
+    /*
+    upload
+    pull
+    commit
+    push
+    
+    download
+    pull/fetch
+    merge
+    */
 }

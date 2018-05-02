@@ -5,6 +5,7 @@
  */
 package vsassembly;
 
+import exceptions.InvalidAssayBarcodeException;
 import functions.PrimitiveConn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,8 +25,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalField;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.LotInfo;
 import model.PillarPlateInfo;
 import model.Product;
 
@@ -39,25 +42,18 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        lotInfoDemo1();
-String s1="001";
-String s2="002w";
-String s3="r003";
-String s4="1";
-//System.out.println(s1.compareTo(s2));
-//System.out.println(s2.compareTo(s3));
-//        System.out.println(s1.compareTo(s4));
-        int i = Integer.getInteger(s4);
-//        System.out.println("get ok");
-//        System.out.println(i);
+        lotInfoDemo1();
     }
 
     private static void lotInfoDemo1() {
         try {
             //        charTest();
             ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
-            PillarPlateInfo.listFromDB(rs);
+            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.listFromDB(rs);
+            LotInfo.lotFromPlates(plates);
         } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAssayBarcodeException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

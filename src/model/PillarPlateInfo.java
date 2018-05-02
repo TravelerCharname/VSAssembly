@@ -55,12 +55,12 @@ public class PillarPlateInfo {
             add=new PillarPlateInfo(rs.getString("pillar_plate_id"), rs.getString("inventory_barcode"), rs.getString("plate_type"), rs.getString("chip_layout_type"),rs.getString("test_name"), 
                     rs.getString("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
             add.init();
-            System.out.println(add.barcode);
+//            System.out.println(add.barcode);
 //            System.out.println(add);
             res.add(add);
             i++;
         }
-        System.out.println(i+" of pillar plate(s) was added");
+        System.out.println(i+" of pillar plate(s) was added from result set");
         System.out.println(res.size()+" of pillar plate(s) was returned");
         return res;
     }
