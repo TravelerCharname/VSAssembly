@@ -70,6 +70,11 @@ public class PillarPlateInfo {
         return "PillarPlateInfo{" + "pillar_plate_id=" + pillar_plate_id + ", inventory_barcode=" + inventory_barcode + ", plate_type=" + plate_type + ", chip_layout_type=" + chip_layout_type + ", test_name=" + test_name + ", assemble_time=" + assemble_time + ", status=" + status + ", plate_seq_num=" + plate_seq_num + ", TSP=" + TSP + ", well_plate_id=" + well_plate_id + ", barcode=" + barcode + '}';
     }
 
+    public AssayBarcode getBarcode() {
+        if(null==barcode) init();
+        return barcode;
+    }
+
     
     
     private boolean init(){

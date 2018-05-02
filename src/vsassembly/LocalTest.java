@@ -39,7 +39,20 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // try to commit this comment
+//        lotInfoDemo1();
+String s1="001";
+String s2="002w";
+String s3="r003";
+String s4="1";
+//System.out.println(s1.compareTo(s2));
+//System.out.println(s2.compareTo(s3));
+//        System.out.println(s1.compareTo(s4));
+        int i = Integer.getInteger(s4);
+//        System.out.println("get ok");
+//        System.out.println(i);
+    }
+
+    private static void lotInfoDemo1() {
         try {
             //        charTest();
             ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
