@@ -171,17 +171,9 @@ public class AssayBarcode {
     check number of digit while writing, skip checking when reading
      */
     public static boolean validate(String assayBarcode) {
-        for (Product p : Product.values()) {
-            if (assayBarcode.startsWith(p.prefix)) {
-                if (Product.TST.equals(p)) {
-                    // verify the last 2 char are digits
-                    // return y/n
-                }
-                // verify total lenth - len(pref) = VAL_PLATE_DIGITS + VAL_BATCH_DIGITS + VAL_LOT_DIGITS
-                // all digits
-            }
-        }
-        return false;
+        AssayBarcode ins = instanceFromBarcode(assayBarcode);
+        ins.validateDigits();
+        return ins.isValid();
     }
     public static final int VAL_PLATE_DIGITS = 7;
     public static final int VAL_BATCH_DIGITS = 3;

@@ -46,7 +46,7 @@ public class PillarPlateInfo {
         this.TSP = TSP;
         this.well_plate_id = well_plate_id;
     }
-    public static ArrayList<PillarPlateInfo> listFromDB(ResultSet rs) throws SQLException{
+    public static ArrayList<PillarPlateInfo> plateListFromDB(ResultSet rs) throws SQLException{
         if(null==rs) return null;
         ArrayList<PillarPlateInfo> res=new ArrayList<>();
         PillarPlateInfo add;

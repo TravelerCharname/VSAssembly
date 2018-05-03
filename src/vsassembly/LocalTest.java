@@ -49,7 +49,7 @@ public class LocalTest {
         try {
             //        charTest();
             ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
-            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.listFromDB(rs);
+            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
             LotInfo.lotFromPlates(plates);
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -81,7 +81,7 @@ System.out.println(new String(chars, b,11-b));
         //            productionDBDemo();
         PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_TBL,"SELECT * FROM `"+PrimitiveConn.LOCAL_TBL+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
         ResultSet newRs = PrimitiveConn.stmt.getResultSet();
-        PillarPlateInfo.listFromDB(newRs);
+        PillarPlateInfo.plateListFromDB(newRs);
     }
 
     public static void localDBDemo() throws SQLException {
