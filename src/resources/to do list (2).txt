@@ -1,0 +1,11 @@
+
+1.complete BR QC template for following
+Food Allergy
+ALPS
+ENA10
+Inhalant
+
+2.UI for manual input
+e.g. incoming materials accession/input
+e.g. modify iqc count
+e.g. 
