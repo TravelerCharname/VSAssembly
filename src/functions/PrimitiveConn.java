@@ -43,7 +43,7 @@ public static Statement stmt;public static ResultSet rs;
 
     public static final String LOCAL_TBL = "pillar_plate_info";
     public static final String LOCALHOST = "jdbc:mysql://localhost:3306/";
-    public static final String LOCAL_PASSWORD = "traveler";   //"000028";   //"traveler"
+    public static final String LOCAL_PASSWORD = ("LM&L".equals(FolderInitializer.USER)?"traveler":"000028");   //"000028";   //"traveler"
     public static final String LOCAL_USER = "root";
     
     public static void generateRecordThrowsLocal(String tbl_name, String sql) {
@@ -63,7 +63,7 @@ public static Statement stmt;public static ResultSet rs;
     }
     
     public static ResultSet lotInfoByProduct(Product p, boolean isLocal){
-        String sql="SELECT * FROM pillar_plate_info.pillar_plate_info WHERE pillar_plate_id like \""+p.name()+"%\" order by pillar_plate_id desc;";
+        String sql="SELECT * FROM pillar_plate_info.pillar_plate_info WHERE pillar_plate_id like \""+p.prefix+"%\" order by pillar_plate_id desc;";
         if(isLocal){    
             generateRecordThrowsLocal(LOCAL_TBL, sql);
         }else{

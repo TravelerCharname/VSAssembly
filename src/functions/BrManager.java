@@ -104,7 +104,7 @@ public class BrManager {
     public static final String PLATENAME = "PLATENAME";
     public static final String PLATEPARTNUMBER = "PLATEPARTNUMBER";
 
-    public static final String BR_ROOT = "C:\\Users\\LM&L\\Desktop\\test\\BR\\2017-2018\\";//"C:\\Users\\mlei\\Desktop\\test\\BR\\2017-2018";
+    public static final String BR_ROOT = FolderInitializer.BR_ROOT;//"C:\\Users\\LM&L\\Desktop\\test\\BR\\2017-2018\\";//"C:\\Users\\mlei\\Desktop\\test\\BR\\2017-2018";
                                         //= "C:\\Users\\mlei\\Documents\\work\\sop\\QC Documents\\product realization\\BR\\2017-2018";//
 
     public BatchInfo getBr() {

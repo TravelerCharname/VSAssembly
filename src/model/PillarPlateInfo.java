@@ -46,7 +46,7 @@ public class PillarPlateInfo {
         this.TSP = TSP;
         this.well_plate_id = well_plate_id;
     }
-    public static ArrayList<PillarPlateInfo> listFromDB(ResultSet rs) throws SQLException{
+    public static ArrayList<PillarPlateInfo> plateListFromDB(ResultSet rs) throws SQLException{
         if(null==rs) return null;
         ArrayList<PillarPlateInfo> res=new ArrayList<>();
         PillarPlateInfo add;
@@ -54,19 +54,31 @@ public class PillarPlateInfo {
         while(rs.next()){
             add=new PillarPlateInfo(rs.getString("pillar_plate_id"), rs.getString("inventory_barcode"), rs.getString("plate_type"), rs.getString("chip_layout_type"),rs.getString("test_name"), 
                     rs.getString("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
-            
-            System.out.println(add);
+            add.init();
+//            System.out.println(add.barcode);
+//            System.out.println(add);
             res.add(add);
             i++;
         }
-        System.out.println(i+" of pillar plate(s) was added");
+        System.out.println(i+" of pillar plate(s) was added from result set");
         System.out.println(res.size()+" of pillar plate(s) was returned");
         return res;
     }
 
     @Override
     public String toString() {
-        return "PillarPlateInfo{" + "pillar_plate_id=" + pillar_plate_id + ", inventory_barcode=" + inventory_barcode + ", plate_type=" + plate_type + ", chip_layout_type=" + chip_layout_type + ", test_name=" + test_name + ", assemble_time=" + assemble_time + ", status=" + status + ", plate_seq_num=" + plate_seq_num + ", TSP=" + TSP + ", well_plate_id=" + well_plate_id + '}';
+        return "PillarPlateInfo{" + "pillar_plate_id=" + pillar_plate_id + ", inventory_barcode=" + inventory_barcode + ", plate_type=" + plate_type + ", chip_layout_type=" + chip_layout_type + ", test_name=" + test_name + ", assemble_time=" + assemble_time + ", status=" + status + ", plate_seq_num=" + plate_seq_num + ", TSP=" + TSP + ", well_plate_id=" + well_plate_id + ", barcode=" + barcode + '}';
     }
+
+    public AssayBarcode getBarcode() {
+        if(null==barcode) init();
+        return barcode;
+    }
+
     
+    
+    private boolean init(){
+        this.barcode=AssayBarcode.instanceFromBarcode(pillar_plate_id);
+        return this.barcode != null;
+    }
 }

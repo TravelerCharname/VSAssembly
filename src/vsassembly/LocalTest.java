@@ -5,6 +5,7 @@
  */
 package vsassembly;
 
+import exceptions.InvalidAssayBarcodeException;
 import functions.PrimitiveConn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,9 +25,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalField;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.LotInfo;
 import model.PillarPlateInfo;
+import model.Product;
 
 /**
  *
@@ -38,7 +42,20 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        charTest();
+        lotInfoDemo1();
+    }
+
+    private static void lotInfoDemo1() {
+        try {
+            //        charTest();
+            ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
+            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
+            LotInfo.lotFromPlates(plates);
+        } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAssayBarcodeException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void charTest() {
@@ -64,7 +81,7 @@ System.out.println(new String(chars, b,11-b));
         //            productionDBDemo();
         PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_TBL,"SELECT * FROM `"+PrimitiveConn.LOCAL_TBL+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
         ResultSet newRs = PrimitiveConn.stmt.getResultSet();
-        PillarPlateInfo.listFromDB(newRs);
+        PillarPlateInfo.plateListFromDB(newRs);
     }
 
     public static void localDBDemo() throws SQLException {

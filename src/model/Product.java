@@ -23,10 +23,10 @@ public enum Product {
     IBSG(9, "IBS IgG 96 Pillar Plate", "910063", "PROCSOP-003-008","IBSG"),
     NEUG(10, "Neural IgG 96 Pillar Plate", "910073", "PROCSOP-003-009","NEUG"),
     NEUM(11, "Neural IgM 96 Pillar Plate", "910074", "PROCSOP-003-009","NEUM"),
-    Zonulin(12, "Zonulin Pillar Plate", "910107", "Not Released","ZOUG"),
+    Zonulin(12, "Zonulin Pillar Plate", "910107", "Not Released","ZIGR"),
     GUT_ZOOMER(13, "Gut Zoomer Pillar Plate", "910077", "PROCSOP-003-011","BACT"),
     FOOD_ALLERGY(14, "Food Allergy Pillar Plate", "910115", "Not Released","FAAE"),
-    INHALANT(15, "Inhalant Allergy Pillar Plate", "910121", "PROCSOP-003-013","INHAL"),
+    INHALANT(15, "Inhalant Allergy Pillar Plate", "910121", "PROCSOP-003-013","UPRE"),
     ENA10(16, "ENA10 IgG Pillar Plate", "910127", "PROCSOP-003-016","ENA10C"),
     TST(17, "TST Pillar Plate", "TEST", "TEST","TST"),
     GPABC(18, "GUT Panel ABC", "TEST", "TEST","GPABC");

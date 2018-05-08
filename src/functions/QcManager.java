@@ -88,7 +88,7 @@ public class QcManager {
     }
     
 
-    public static final String QC_ROOT="C:\\Users\\LM&L\\Desktop\\test\\QC\\2017-2018\\";//"C:\\Users\\LM&L\\Desktop\\微型办公室\\inspection docs\\QC Documents\\product realization\\QC\\2018-2019\\";
+    public static final String QC_ROOT=FolderInitializer.QC_ROOT;//"C:\\Users\\LM&L\\Desktop\\test\\QC\\2017-2018\\";//"C:\\Users\\LM&L\\Desktop\\微型办公室\\inspection docs\\QC Documents\\product realization\\QC\\2018-2019\\";
     public static final String hQCh = "-QC-Vibrant ";
     public static final String sDOC = ".doc";
     public static final String sXML = ".xml";
