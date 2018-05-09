@@ -27,7 +27,7 @@ initializeAll();
     public static void initialize(String folderPath){
         if(null==folderPath) return;
         File folder=new File(folderPath);
-        if(folder.isDirectory()&&!folder.exists()){
+        if(!folder.exists()){
             boolean ok = folder.mkdirs();
             if(ok){
                 System.out.println(folderPath+" was successfully created");
@@ -35,7 +35,7 @@ initializeAll();
         }
     }
     public static void initializeAll(){
-        String[] paths = {BR_ROOT,LOG_FILE,QC_ROOT};
+        String[] paths = {BR_ROOT,LOG_ROOT,QC_ROOT};
         
         for(String path:paths){
             initialize(path);
@@ -46,6 +46,6 @@ initializeAll();
 //    }
     
     public static final String BR_ROOT = "C:\\Users\\"+USER+"\\Desktop\\test\\BR\\2017-2018\\";
-    public static final String LOG_FILE="C:\\Users\\"+USER+"\\Desktop\\test\\logs\\lot info history.txt";
+    public static final String LOG_ROOT="C:\\Users\\"+USER+"\\Desktop\\test\\logs\\lot info\\";
     public static final String QC_ROOT="C:\\Users\\"+USER+"\\Desktop\\test\\QC\\2017-2018\\";//"C:\\Users\\LM&L\\Desktop\\微型办公室\\inspection docs\\QC Documents\\product realization\\QC\\2018-2019\\";
 }

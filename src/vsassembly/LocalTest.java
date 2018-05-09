@@ -6,6 +6,7 @@
 package vsassembly;
 
 import exceptions.InvalidAssayBarcodeException;
+import functions.LotNumberUtil;
 import functions.PrimitiveConn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -50,10 +51,13 @@ public class LocalTest {
             //        charTest();
             ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
             ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
-            LotInfo.lotFromPlates(plates);
+            LotInfo aLot = LotInfo.lotFromPlates(plates);
+            LotNumberUtil.log(aLot);
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidAssayBarcodeException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

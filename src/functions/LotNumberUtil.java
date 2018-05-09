@@ -7,6 +7,7 @@ package functions;
 
 import com.google.gson.Gson;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,15 +28,18 @@ public class LotNumberUtil {
     // date-time product lot-num quantity
     
     private static BufferedWriter log;
-    private static final String LOG_FILE=FolderInitializer.LOG_FILE;//"C:\\Users\\LM&L\\Desktop\\test\\logs\\lot info history.txt";
+    private static final String LOG_ROOT=FolderInitializer.LOG_ROOT;//"C:\\Users\\LM&L\\Desktop\\test\\logs\\lot info history.txt";
     public static void log(LotInfo lot) throws IOException{
-        if(null==log){
-            resetLogger();
-        }
+        File dest=getLogFile(lot);
+        log=new BufferedWriter(new FileWriter(dest));
+        log.write(gs.toJson(lot, LotInfo.class));
+        log.flush();
+        log.close();log=null;
     }
 
-    private static void resetLogger() throws IOException {
-        // nong ge dir initializer tongyi zao dir
-        log=new BufferedWriter(new FileWriter(LOG_FILE));
+    public static File getLogFile(LotInfo lot) {
+        File dest=new File(LOG_ROOT,DocDateUtil.getfDate()+" "+lot.getProd().name()+" "+lot.getLotNumber()+" "+lot.getTotal()+".txt");
+        return dest;
     }
+
 }

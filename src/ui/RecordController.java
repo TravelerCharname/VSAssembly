@@ -8,6 +8,7 @@ package ui;
 import exceptions.ResourcePropertiesException;
 import exceptions.UnknownProductException;
 import functions.BrManager;
+import functions.FontManager;
 import functions.QcManager;
 import java.io.IOException;
 import model.BatchInfo;
@@ -19,6 +20,7 @@ import model.BatchInfo;
 public class RecordController {
     private static BrManager brmng;
     private static QcManager qcmng;
+    private static FontManager fm;
     /*
     overwrite if exists
      */

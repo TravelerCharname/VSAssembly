@@ -18,15 +18,19 @@ public class LotInfo {
     private Product prod;
     private String lotNumber;
     private int total;
+    private ArrayList<PillarPlateInfo> plates;
 
     // traverse to find the latest lot number
     public static LotInfo lotFromPlates(ArrayList<PillarPlateInfo> plates) throws InvalidAssayBarcodeException {
         if (null == plates) {
             return null;
         }
+        
         LotInfo lotInfo = new LotInfo();
+        lotInfo.plates=new ArrayList<>();
         AssayBarcode bar;
-        int aLotNumber = -1, temp, count = 0;
+        int aLotNumber = -1, temp;
+//        int count = 0;
         // product
         bar = plates.get(0).getBarcode();
         lotInfo.prod = bar.getProduct();
@@ -42,22 +46,26 @@ public class LotInfo {
                 throw new InvalidAssayBarcodeException(InvalidAssayBarcodeException.LOT_NUMBER + "@" + bar);
             }
             if (aLotNumber == temp) {
-                count++;
-                System.out.println("add "+p.pillar_plate_id);
+                lotInfo.plates.add(p);
+//                count++;
+//                System.out.println("add "+p.pillar_plate_id);
             } else if (aLotNumber < temp) {
-                count = 1;
+                lotInfo.plates.clear();
+                lotInfo.plates.add(p);
+//                count = 1;
                 aLotNumber = temp;
                 
                 System.out.println("============ lot number updated ============");
                 System.out.println("add "+p.pillar_plate_id);
             }
         }
-        lotInfo.total = count;
+//        lotInfo.total = count;
+        lotInfo.total = lotInfo.plates.size();
         lotInfo.lotNumber = aLotNumber + "";
         // check consistancy of prod & lot num
 
         System.out.println("show lot info");
-        lotInfo.show(null);  //lotInfo.show(plates);
+        lotInfo.show(lotInfo.plates);  //lotInfo.show(plates);  //lotInfo.plates
         return lotInfo;
     }
 
@@ -75,6 +83,9 @@ public class LotInfo {
 //        return lot;
 //    }
 
+    public String getLotInfoEntry(){
+        return prod.name()+"\t"+this.lotNumber+"\t"+this.total;
+    }
     private void show(ArrayList<PillarPlateInfo> toShow) {
         System.out.println("product: " + prod);
         System.out.println("lot number: " + lotNumber);
@@ -87,8 +98,27 @@ public class LotInfo {
                 }
             });
             for (PillarPlateInfo p : toShow) {
-                System.out.println(p.pillar_plate_id);
+                System.out.println(p);
+//                System.out.println(p.pillar_plate_id);
             }
         }
     }
+
+    public Product getProd() {
+        return prod;
+    }
+
+    public String getLotNumber() {
+        return lotNumber;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public ArrayList<PillarPlateInfo> getPlates() {
+        return plates;
+    }
+    
+    
 }
