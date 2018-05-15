@@ -18,6 +18,11 @@ public class LotInfo {
     private Product prod;
     private String lotNumber;
     private int total;
+    private int approved;
+    private int failed;
+    private int finished;
+    private int inUse;
+    private int inStock;
     private ArrayList<PillarPlateInfo> plates;
 
     // traverse to find the latest lot number
@@ -25,9 +30,9 @@ public class LotInfo {
         if (null == plates) {
             return null;
         }
-        
+
         LotInfo lotInfo = new LotInfo();
-        lotInfo.plates=new ArrayList<>();
+        lotInfo.plates = new ArrayList<>();
         AssayBarcode bar;
         int aLotNumber = -1, temp;
 //        int count = 0;
@@ -37,8 +42,8 @@ public class LotInfo {
         // lot number// count
         for (PillarPlateInfo p : plates) {
             bar = p.getBarcode();
-            if(!bar.isValid()){
-                System.out.println("alert! invalid plate: "+bar);
+            if (!bar.isValid()) {
+                System.out.println("alert! invalid plate: " + bar);
             }
             try {
                 temp = Integer.parseInt(bar.lotNumber);
@@ -47,16 +52,21 @@ public class LotInfo {
             }
             if (aLotNumber == temp) {
                 lotInfo.plates.add(p);
+                lotInfo.count1(p);
+
+                
 //                count++;
 //                System.out.println("add "+p.pillar_plate_id);
             } else if (aLotNumber < temp) {
                 lotInfo.plates.clear();
+                lotInfo.clearCount();
                 lotInfo.plates.add(p);
+                lotInfo.count1(p);
 //                count = 1;
                 aLotNumber = temp;
-                
+
                 System.out.println("============ lot number updated ============");
-                System.out.println("add "+p.pillar_plate_id);
+                System.out.println("add " + p.pillar_plate_id);
             }
         }
 //        lotInfo.total = count;
@@ -82,14 +92,20 @@ public class LotInfo {
 //        LotInfo lot = new LotInfo();
 //        return lot;
 //    }
-
-    public String getLotInfoEntry(){
-        return prod.name()+"\t"+this.lotNumber+"\t"+this.total;
+    public String getLotInfoEntry() {
+        return prod.name() + "\t" + this.lotNumber + "\t" + this.total;
     }
+
     private void show(ArrayList<PillarPlateInfo> toShow) {
         System.out.println("product: " + prod);
         System.out.println("lot number: " + lotNumber);
         System.out.println("lot size: " + total);
+        System.out.println("approved: " + approved);
+        System.out.println("failed: " + failed);
+        System.out.println("finished: " + finished);
+        System.out.println("in use: " + inUse);
+        System.out.println("in stock: " + inStock);
+        System.out.println("verify: total=inUse+inStock+finished");
         if (toShow != null) {
             toShow.sort(new Comparator<PillarPlateInfo>() {
                 @Override
@@ -119,6 +135,36 @@ public class LotInfo {
     public ArrayList<PillarPlateInfo> getPlates() {
         return plates;
     }
-    
-    
+
+    public void count1(PillarPlateInfo p) {
+        switch (p.status) {
+                    case Approve:
+                        this.approved++;
+                        break;
+                    case Fail:
+                        this.failed++;
+                        break;
+                    case finish:
+                        this.finished++;
+                        break;
+                    case assembled:
+                        this.inStock++;
+                        break;
+                    case Scanning:
+                    case Testing:
+                        this.inUse++;
+                        break;
+                    default:
+                        break;
+                }
+
+    }
+    public void clearCount(){
+        this.approved=0;
+        this.failed=0;
+        this.finished=0;
+        this.inStock=0;
+        this.inUse=0;
+        this.total=0;
+    }
 }

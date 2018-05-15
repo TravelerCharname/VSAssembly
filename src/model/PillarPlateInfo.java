@@ -20,7 +20,7 @@ public class PillarPlateInfo {
     public String chip_layout_type;
     public String test_name;
     public String assemble_time;
-    public String status;
+    public Status status;
     
     // left NULL
     public String plate_seq_num;
@@ -41,7 +41,7 @@ public class PillarPlateInfo {
         this.chip_layout_type = chip_layout_type;
         this.test_name = test_name;
         this.assemble_time = assemble_time;
-        this.status = status;
+        this.status = Status.getStatusByName(status);
         this.plate_seq_num = plate_seq_num;
         this.TSP = TSP;
         this.well_plate_id = well_plate_id;
