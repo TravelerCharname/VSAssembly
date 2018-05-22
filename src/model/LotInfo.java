@@ -7,6 +7,7 @@ package model;
 
 import exceptions.InvalidAssayBarcodeException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 
 /**
@@ -19,14 +20,29 @@ public class LotInfo {
     private String lotNumber;
     private int total;
     private int approved;
+    private int assembled;
     private int failed;
     private int finished;
-    private int inUse;
-    private int inStock;
+//    private int inUse;
+//    private int inStock;
+    private int scanning;
+    private int test;
+    private int testing;
+
     private ArrayList<PillarPlateInfo> plates;
 
+    public LotInfo() {
+    }
+
+    public LotInfo(Product prod, String lotNumber, ArrayList<PillarPlateInfo> plates) {
+        this.prod = prod;
+        this.lotNumber = lotNumber;
+        this.plates = plates;
+        count(plates);
+    }
+
     // traverse to find the latest lot number
-    public static LotInfo lotFromPlates(ArrayList<PillarPlateInfo> plates) throws InvalidAssayBarcodeException {
+    public static LotInfo getLatestLotFromPlates(ArrayList<PillarPlateInfo> plates) throws InvalidAssayBarcodeException {
         if (null == plates) {
             return null;
         }
@@ -54,7 +70,6 @@ public class LotInfo {
                 lotInfo.plates.add(p);
                 lotInfo.count1(p);
 
-                
 //                count++;
 //                System.out.println("add "+p.pillar_plate_id);
             } else if (aLotNumber < temp) {
@@ -93,18 +108,22 @@ public class LotInfo {
 //        return lot;
 //    }
     public String getLotInfoEntry() {
-        return prod.name() + "\t" + this.lotNumber + "\t" + this.total;
+        return prod.name() + "\t" + this.lotNumber + "\t" + this.total+ "\t" + this.assembled + "\t" + this.approved+ "\t" + this.failed + "\t" + this.finished+ "\t" + this.test + "\t" + this.testing + "\t" + this.scanning;
     }
 
-    private void show(ArrayList<PillarPlateInfo> toShow) {
+    public void show(ArrayList<PillarPlateInfo> toShow) {
         System.out.println("product: " + prod);
         System.out.println("lot number: " + lotNumber);
         System.out.println("lot size: " + total);
         System.out.println("approved: " + approved);
+        System.out.println("aassembled: " + assembled);
         System.out.println("failed: " + failed);
         System.out.println("finished: " + finished);
-        System.out.println("in use: " + inUse);
-        System.out.println("in stock: " + inStock);
+//        System.out.println("in use: " + inUse);
+//        System.out.println("in stock: " + inStock);
+        System.out.println("test: " + test);
+        System.out.println("testing: " + testing);
+        System.out.println("scanning: " + scanning);
         System.out.println("verify: total=inUse+inStock+finished");
         if (toShow != null) {
             toShow.sort(new Comparator<PillarPlateInfo>() {
@@ -136,35 +155,78 @@ public class LotInfo {
         return plates;
     }
 
+    public void count(Collection<PillarPlateInfo> plates) {
+        for (PillarPlateInfo p : plates) {
+            switch (p.status) {
+                case Approve:
+                    this.approved++;
+                    break;
+                case Fail:
+                    this.failed++;
+                    break;
+                case finish:
+                    this.finished++;
+                    break;
+                case assembled:
+                    this.assembled++;
+//                    this.inStock++;
+                    break;
+                case Scanning:
+                    this.scanning++;
+                    break;
+                case Testing:
+                    this.testing++;
+                    break;
+                case test:
+                    this.test++;
+                    break;
+                default:
+                    break;
+            }
+            this.total++;
+        }
+    }
+
     public void count1(PillarPlateInfo p) {
         switch (p.status) {
-                    case Approve:
-                        this.approved++;
-                        break;
-                    case Fail:
-                        this.failed++;
-                        break;
-                    case finish:
-                        this.finished++;
-                        break;
-                    case assembled:
-                        this.inStock++;
-                        break;
-                    case Scanning:
-                    case Testing:
-                        this.inUse++;
-                        break;
-                    default:
-                        break;
-                }
+            case Approve:
+                this.approved++;
+                break;
+            case Fail:
+                this.failed++;
+                break;
+            case finish:
+                this.finished++;
+                break;
+            case assembled:
+                this.assembled++;
+//                    this.inStock++;
+                break;
+            case Scanning:
+                this.scanning++;
+                break;
+            case Testing:
+                this.testing++;
+                break;
+            case test:
+                this.test++;
+                break;
+            default:
+                break;
+        }
 
     }
-    public void clearCount(){
-        this.approved=0;
-        this.failed=0;
-        this.finished=0;
-        this.inStock=0;
-        this.inUse=0;
-        this.total=0;
+
+    public void clearCount() {
+        this.approved = 0;
+        this.failed = 0;
+        this.finished = 0;
+        this.assembled = 0;
+        this.scanning = 0;
+        this.testing = 0;
+        this.test = 0;
+//        this.inStock = 0;
+//        this.inUse = 0;
+        this.total = 0;
     }
 }

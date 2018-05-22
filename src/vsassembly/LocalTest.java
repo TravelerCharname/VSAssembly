@@ -49,9 +49,11 @@ public class LocalTest {
     private static void lotInfoDemo1() {
         try {
             //        charTest();
-            ResultSet rs = PrimitiveConn.lotInfoByProduct(Product.ANA, true);
+            ResultSet rs = LotNumberUtil.lotInfoByProduct(Product.ANA, true);
             ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
-            LotInfo aLot = LotInfo.lotFromPlates(plates);
+            LotInfo aLot = LotInfo.getLatestLotFromPlates(plates);
+//LotInfo aLot=new LotInfo(Product.ANA, "8007", plates);
+//aLot.show(plates);
             LotNumberUtil.log(aLot);
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,42 +82,42 @@ for(int i=0;i<11;i++){
 }
 System.out.println(new String(chars, b,11-b));
     }
+//
+//    public static void resultSetToPillarPlatesTest() throws SQLException {
+//        //            productionDBDemo();
+//        PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_SCHEMA,"SELECT * FROM `"+PrimitiveConn.LOCAL_SCHEMA+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
+//        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
+//        PillarPlateInfo.plateListFromDB(newRs);
+//    }
 
-    public static void resultSetToPillarPlatesTest() throws SQLException {
-        //            productionDBDemo();
-        PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_TBL,"SELECT * FROM `"+PrimitiveConn.LOCAL_TBL+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
-        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
-        PillarPlateInfo.plateListFromDB(newRs);
-    }
+//    public static void localDBDemo() throws SQLException {
+//        System.out.println("==== 2nd time ====");
+//        PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_SCHEMA,"SELECT * FROM `"+PrimitiveConn.LOCAL_SCHEMA+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
+//        System.out.println("==== test separately ====");
+//        while (PrimitiveConn.rs.next()) {
+//            System.out.println(PrimitiveConn.rs.getString(1) + "  " + PrimitiveConn.rs.getString(2) + "  " + PrimitiveConn.rs.getString(3));
+//        }
+//        System.out.println("yong diao le");
+//        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
+//        while (newRs.next()) {
+//            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
+//        }
+//    }
 
-    public static void localDBDemo() throws SQLException {
-        System.out.println("==== 2nd time ====");
-        PrimitiveConn.generateRecordThrowsLocal(PrimitiveConn.LOCAL_TBL,"SELECT * FROM `"+PrimitiveConn.LOCAL_TBL+"`.`pillar_plate_info` order by test_name,status,assemble_time;");
-        System.out.println("==== test separately ====");
-        while (PrimitiveConn.rs.next()) {
-            System.out.println(PrimitiveConn.rs.getString(1) + "  " + PrimitiveConn.rs.getString(2) + "  " + PrimitiveConn.rs.getString(3));
-        }
-        System.out.println("yong diao le");
-        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
-        while (newRs.next()) {
-            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
-        }
-    }
-
-    public static void productionDBDemo() throws SQLException {
-        PrimitiveConn.generateRecordThrows(PrimitiveConn.VIBRANT_TEST_TRACKING,"SELECT * FROM `vibrant_test_tracking`.`pillar_plate_info` order by test_name,status,assemble_time;");
-        System.out.println("==== test separately ====");
-        String schema = PrimitiveConn.con.getSchema();  System.out.println(schema);
-        Statement text = PrimitiveConn.rs.getStatement();  System.out.println(text.isCloseOnCompletion());
-        while (PrimitiveConn.rs.next()) {
-            System.out.println(PrimitiveConn.rs.getString(1) + "  " + PrimitiveConn.rs.getString(2) + "  " + PrimitiveConn.rs.getString(3));
-        }
-        System.out.println("yong diao le");
-        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
-        while (newRs.next()) {
-            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
-        }
-    }
+//    public static void productionDBDemo() throws SQLException {
+//        PrimitiveConn.generateRecordThrows(PrimitiveConn.VIBRANT_TEST_TRACKING,"SELECT * FROM `vibrant_test_tracking`.`pillar_plate_info` order by test_name,status,assemble_time;");
+//        System.out.println("==== test separately ====");
+//        String schema = PrimitiveConn.con.getSchema();  System.out.println(schema);
+//        Statement text = PrimitiveConn.rs.getStatement();  System.out.println(text.isCloseOnCompletion());
+//        while (PrimitiveConn.rs.next()) {
+//            System.out.println(PrimitiveConn.rs.getString(1) + "  " + PrimitiveConn.rs.getString(2) + "  " + PrimitiveConn.rs.getString(3));
+//        }
+//        System.out.println("yong diao le");
+//        ResultSet newRs = PrimitiveConn.stmt.getResultSet();
+//        while (newRs.next()) {
+//            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
+//        }
+//    }
 
     public static void dateTimeFormaterTest() {
         //        try {

@@ -6,14 +6,17 @@
 package functions;
 
 import com.google.gson.Gson;
+import static functions.PrimitiveConn.VIBRANT_TEST_TRACKING;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Properties;
 import model.LotInfo;
 import model.Product;
+import static functions.PrimitiveConn.LOCAL_SCHEMA;
 
 /**
  *
@@ -42,4 +45,71 @@ public class LotNumberUtil {
         return dest;
     }
 
+    /*
+    create lot info table
+    */
+    public static void createLotInfoTable(){
+        String sql="CREATE TABLE `lotinfo` (\n" +
+"  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+"  `product` varchar(10) DEFAULT NULL,\n" +
+"  `total` int(11) DEFAULT NULL,\n" +
+"  `in_use` int(11) DEFAULT NULL,\n" +
+"  `in_stock` int(11) DEFAULT NULL,\n" +
+"  `assembled` int(11) DEFAULT NULL,\n" +
+"  `approved` int(11) DEFAULT NULL,\n" +
+"  `failed` int(11) DEFAULT NULL,\n" +
+"  `test` int(11) DEFAULT NULL,\n" +
+"  `testing` int(11) DEFAULT NULL,\n" +
+"  `scanning` int(11) DEFAULT NULL,\n" +
+"  `finished` int(11) DEFAULT NULL,\n" +
+"  `time` datetime DEFAULT NULL,\n" +
+"  PRIMARY KEY (`id`)\n" +
+") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+    }
+    
+    /*
+    insert on duplicate update, return the number of rows affected
+    */
+    public static int insertUpdateLotinfo(){
+        return -1;
+    }
+    /*
+    insert on duplicate update, return the number of rows affected
+    */
+    public static int batchInsertUpdateLotinfo(){
+        return -1;
+    }
+    
+    public static String[] getLotNumbers(Product p){
+        return null;
+    }
+    
+    /*
+    all plates
+    one plate p
+        product
+            key: product+lotNum, i.e.productName + 3 digits
+            if non-exist
+                new & put
+            exists
+                status
+                    getLotInfo from map, lotInfo.total++; lotInfo.status++;
+            lotInfo.plates.add(p);
+        test
+            total++;
+    
+    for all lot in map.values
+        insertUpdate(lot)
+    */
+    public static void initLotInfoDbForProduct(Product p){
+        
+    }
+    
+    public static ResultSet lotInfoByProduct(Product p, boolean isLocal) {
+        String schema=(isLocal?LOCAL_SCHEMA:VIBRANT_TEST_TRACKING);
+        
+        String sql = "SELECT * FROM "+schema+".pillar_plate_info WHERE pillar_plate_id like \"" + p.prefix + "%\" order by pillar_plate_id desc;";
+        ResultSet result=PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
+        return result;
+    }
 }
