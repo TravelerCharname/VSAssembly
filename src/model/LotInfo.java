@@ -38,7 +38,7 @@ public class LotInfo {
         this.prod = prod;
         this.lotNumber = lotNumber;
         this.plates = plates;
-        count(plates);
+        count();//plates
     }
 
     // traverse to find the latest lot number
@@ -107,10 +107,13 @@ public class LotInfo {
 //        LotInfo lot = new LotInfo();
 //        return lot;
 //    }
-    public String getLotInfoEntry() {
+    public String getLotInfoLogEntry() {
         return prod.name() + "\t" + this.lotNumber + "\t" + this.total+ "\t" + this.assembled + "\t" + this.approved+ "\t" + this.failed + "\t" + this.finished+ "\t" + this.test + "\t" + this.testing + "\t" + this.scanning;
     }
-
+    public String getLotInfoDbEntry() {
+        return "('"+prod.plateName + "','" +lotNumber + "','" + this.total  + "','" + this.assembled  + "','" + this.approved + "','" +this.failed  + "','" + this.finished + "','" + this.test  + "','" + this.testing  + "','" + this.scanning+"')";
+    }
+    
     public void show(ArrayList<PillarPlateInfo> toShow) {
         System.out.println("product: " + prod);
         System.out.println("lot number: " + lotNumber);
@@ -133,7 +136,7 @@ public class LotInfo {
                 }
             });
             for (PillarPlateInfo p : toShow) {
-                System.out.println(p);
+//                System.out.println(p);
 //                System.out.println(p.pillar_plate_id);
             }
         }
@@ -155,7 +158,16 @@ public class LotInfo {
         return plates;
     }
 
-    public void count(Collection<PillarPlateInfo> plates) {
+    public boolean isConsistent(){
+        for(PillarPlateInfo p:plates){
+            if(!p.blindLotNumber().equals(lotNumber)){
+                System.out.println("inconsistent plate: "+p);
+                return false;
+            }
+        }
+        return true;
+    }
+    public void count() {   //Collection<PillarPlateInfo> plates
         for (PillarPlateInfo p : plates) {
             switch (p.status) {
                 case Approve:

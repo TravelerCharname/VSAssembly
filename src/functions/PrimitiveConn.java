@@ -87,6 +87,35 @@ public class PrimitiveConn {
         }
         return result;
     }
+    
+    public static int updateRecordThrows(String schema, String sql, boolean isLocal) {
+        int result=-1;
+        try {
+            if (null != con && !con.isClosed()) {
+                con.close();
+            }
+            if (isLocal) {
+                con = DriverManager.getConnection(LOCALHOST + schema, LOCAL_USER, LOCAL_PASSWORD);
+            } else {
+                con = DriverManager.getConnection(SERVER + schema, USER_NAME, PASSWORD);
+            }
+//here sonoo is database name, root is username and password
+            stmt = con.createStatement();
+            stmt.closeOnCompletion();
+            result = stmt.executeUpdate(sql); //
+//            while (rs.next()) {
+//                System.out.println(rs.getString(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
+//            }
+//            con.close();
+
+        } catch (SQLException ex) {
+            System.out.println("last query..."+sql);
+            
+            Logger.getLogger(PrimitiveConn.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     public static final String VIBRANT_TEST_TRACKING = "vibrant_test_tracking";
     public static final String SERVER = "jdbc:mysql://192.168.10.121:3306/";
     public static final String PASSWORD = "vibrant";

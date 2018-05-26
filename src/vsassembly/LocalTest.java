@@ -27,6 +27,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.LotInfo;
@@ -43,14 +44,45 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        lotInfoDemo1();
+//        lotutildemo();
+        try {
+            LotNumberUtil.initLotInfoDbForProduct(Product.CEL, true);
+        } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void lotutildemo() {
+        try {
+            HashMap<String,LotInfo> map=new HashMap<>();
+            ArrayList<PillarPlateInfo> plates = LotNumberUtil.getAllPlatesForProduct(Product.CEL, true);
+            String key;LotInfo l;
+            for(PillarPlateInfo p:plates){
+                key = p.blindLotNumber();
+                l=map.get(key);
+                if(null==l) l=new LotInfo(Product.CEL, key, new ArrayList<>());
+                l.getPlates().add(p);
+                map.put(key, l);
+            }
+            
+            for(LotInfo lot:map.values()){
+                System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+                
+                lot.isConsistent();
+                lot.count();System.out.println("lot num: "+lot.getLotNumber());
+                System.out.println(lot.getLotInfoLogEntry());
+                lot.show(lot.getPlates());
+            }
+//        lotInfoDemo1();
+        } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static void lotInfoDemo1() {
         try {
             //        charTest();
-            ResultSet rs = LotNumberUtil.lotInfoByProduct(Product.ANA, true);
-            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
+            ArrayList<PillarPlateInfo> plates = LotNumberUtil.getAllPlatesForProduct(Product.ANA, true);
             LotInfo aLot = LotInfo.getLatestLotFromPlates(plates);
 //LotInfo aLot=new LotInfo(Product.ANA, "8007", plates);
 //aLot.show(plates);

@@ -69,6 +69,7 @@ public class PillarPlateInfo {
     public String toString() {
         return "PillarPlateInfo{" + "pillar_plate_id=" + pillar_plate_id + ", inventory_barcode=" + inventory_barcode + ", plate_type=" + plate_type + ", chip_layout_type=" + chip_layout_type + ", test_name=" + test_name + ", assemble_time=" + assemble_time + ", status=" + status + ", plate_seq_num=" + plate_seq_num + ", TSP=" + TSP + ", well_plate_id=" + well_plate_id + ", barcode=" + barcode + '}';
     }
+    
 
     public AssayBarcode getBarcode() {
         if(null==barcode) init();
@@ -76,6 +77,13 @@ public class PillarPlateInfo {
     }
 
     
+    
+    public String blindLotNumber(){
+        String s = pillar_plate_id.toUpperCase();
+            s = s.replaceFirst(barcode.getProduct().prefix,"");
+            System.out.println(pillar_plate_id+" => "+s);
+            return s.substring(0,3);
+    }
     
     private boolean init(){
         this.barcode=AssayBarcode.instanceFromBarcode(pillar_plate_id);

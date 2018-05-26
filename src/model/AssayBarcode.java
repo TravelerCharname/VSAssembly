@@ -183,6 +183,4 @@ public class AssayBarcode {
     public String toString() {
         return "AssayBarcode{" + "namePrefix=" + namePrefix + ", lotNumber=" + lotNumber + ", batchNumber=" + batchNumber + ", plateId=" + plateId + ", product=" + product + ", validPref=" + validPref + ", validlotNumber=" + validlotNumber + ", validbatchNumber=" + validbatchNumber + ", validplateId=" + validplateId + '}';
     }
-    
-    
 }

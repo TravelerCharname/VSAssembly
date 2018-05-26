@@ -17,6 +17,9 @@ import java.util.Properties;
 import model.LotInfo;
 import model.Product;
 import static functions.PrimitiveConn.LOCAL_SCHEMA;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import model.PillarPlateInfo;
 
 /**
  *
@@ -45,6 +48,7 @@ public class LotNumberUtil {
         return dest;
     }
 
+    public static final String INSERT_FIELDS=" (`product`,`lot_number`,`total`,`assembled`,`approved`,`failed`,`finished`,`test`,`testing`,`scanning`) ";
     /*
     create lot info table
     */
@@ -101,15 +105,36 @@ public class LotNumberUtil {
     for all lot in map.values
         insertUpdate(lot)
     */
-    public static void initLotInfoDbForProduct(Product p){
+    public static void initLotInfoDbForProduct(Product prod,boolean isLocal) throws SQLException{
+        HashMap<String,LotInfo> map=new HashMap<>();
+        ArrayList<PillarPlateInfo> plates = getAllPlatesForProduct(prod, isLocal);
+        String key;LotInfo l;
+        for(PillarPlateInfo p:plates){
+            key = p.blindLotNumber();
+            System.out.println("lot num "+key);
+            l=map.get(key);
+            if(null==l) l=new LotInfo(prod, key, new ArrayList<>());
+            l.getPlates().add(p);
+            map.put(key, l);
+        }
+        String schema=(isLocal?LOCAL_SCHEMA:VIBRANT_TEST_TRACKING);
+        String sql,values;
+        for(LotInfo lot:map.values()){
+            lot.count();
+            values=lot.getLotInfoDbEntry();
+            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values+";"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+            int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+            System.out.println(updateRecordThrows+" rows affected");
+        }
         
     }
     
-    public static ResultSet lotInfoByProduct(Product p, boolean isLocal) {
+    public static ArrayList<PillarPlateInfo> getAllPlatesForProduct(Product p, boolean isLocal) throws SQLException {
         String schema=(isLocal?LOCAL_SCHEMA:VIBRANT_TEST_TRACKING);
         
         String sql = "SELECT * FROM "+schema+".pillar_plate_info WHERE pillar_plate_id like \"" + p.prefix + "%\" order by pillar_plate_id desc;";
-        ResultSet result=PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
-        return result;
+        ResultSet r=PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
+        ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(r);
+        return plates;
     }
 }
