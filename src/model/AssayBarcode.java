@@ -5,6 +5,9 @@
  */
 package model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author LM&L
@@ -34,7 +37,7 @@ public class AssayBarcode {
 
     }
 
-    public AssayBarcode (String pillarPlateBarcode) {
+    public AssayBarcode(String pillarPlateBarcode) {
         Product temp = null;
         for (Product p : Product.values()) {
             if (!pillarPlateBarcode.toUpperCase().startsWith(namePrefix)) {
@@ -79,14 +82,26 @@ public class AssayBarcode {
     }
 
     public static AssayBarcode instanceFromBarcode(String pillarPlateBarcode) {
-        if(null==pillarPlateBarcode) return null;
-        AssayBarcode ab=new AssayBarcode();
+        if (null == pillarPlateBarcode) {
+            return null;
+        }
+        pillarPlateBarcode=pillarPlateBarcode.trim();
+        AssayBarcode ab = new AssayBarcode();
+        outer:
         for (Product p : Product.values()) {
             if (!pillarPlateBarcode.toUpperCase().startsWith(p.prefix)) {
                 continue;
             }
+
+            inner:
+            for (Pattern pattern : P_ILLEGAL_STRING) {
+                if (pattern.matcher(pillarPlateBarcode).find()) {
+                    System.out.println("found "+pattern.pattern()+" in "+pillarPlateBarcode+"...........");
+                    break outer;
+                }
+            }
             ab.product = p;
-            ab.namePrefix=p.prefix;
+            ab.namePrefix = p.prefix;
             ab.validPref = true;
             break;
         }
@@ -106,8 +121,8 @@ public class AssayBarcode {
             but how to tell 1st lot from 10th lot?
              */
             String s = pillarPlateBarcode.toUpperCase();
-            s = s.replaceFirst(ab.product.prefix,"");
-            
+            s = s.replaceFirst(ab.product.prefix, "");
+
 //            char[] chars = s.toCharArray();
 //            int begin=0;
 //            for(int i=0;i<s.length();i++){
@@ -115,27 +130,31 @@ public class AssayBarcode {
 //            }
             int mark;
             mark = s.length() - VAL_PLATE_DIGITS;
-            try{if (s.startsWith("8")) {
-                ab.lotNumber = s.substring(0, 4);
-                ab.batchNumber = s.substring(4, mark);
-            } else {
-                ab.lotNumber = s.substring(0, 3);
-                ab.batchNumber = s.substring(3, mark);
-            }}catch(java.lang.StringIndexOutOfBoundsException e){
-                System.out.println(pillarPlateBarcode+" izzue");
+            try {
+                if (s.startsWith("8")) {
+                    ab.lotNumber = s.substring(0, 4);
+                    ab.batchNumber = s.substring(4, mark);
+                } else {
+                    ab.lotNumber = s.substring(0, 3);
+                    ab.batchNumber = s.substring(3, mark);
+                }
+            } catch (java.lang.StringIndexOutOfBoundsException e) {
+                System.out.println(pillarPlateBarcode + " izzue");
             }
             ab.plateId = s.substring(mark);
-            
+
             ab.validateDigits();
         }
         return ab;
     }
-    
+
     public String formAssayBarcode() {
         return namePrefix + lotNumber + batchNumber + plateId;
     }
 
     public Product getProduct() {
+        Product luk = Product.lookupByNameOrPartNumberOrSOP(namePrefix);
+        if(null==luk) System.out.println("can't find product for name: "+namePrefix+lotNumber+batchNumber+plateId);
         return Product.lookupByNameOrPartNumberOrSOP(namePrefix);
     }
 
@@ -149,21 +168,21 @@ public class AssayBarcode {
             return true;
         }
 //        validateDigits();
-        return this.validPref&&this.validbatchNumber&&this.validlotNumber&&this.validplateId;
+        return this.validPref && this.validbatchNumber && this.validlotNumber && this.validplateId;
     }
 
     private void validateDigits() {
         // production plates
         if (VAL_LOT_DIGITS == lotNumber.length()) {
-            this.validlotNumber=true;
-        }else if(4 == lotNumber.length()){
-            this.validlotNumber=this.lotNumber.startsWith("8");
+            this.validlotNumber = true;
+        } else if (4 == lotNumber.length()) {
+            this.validlotNumber = this.lotNumber.startsWith("8");
         }
         if (VAL_BATCH_DIGITS == batchNumber.length()) {
-            this.validbatchNumber=true;
+            this.validbatchNumber = true;
         }
         if (VAL_PLATE_DIGITS == plateId.length()) {
-            this.validplateId=true;
+            this.validplateId = true;
         }
     }
 
@@ -178,6 +197,8 @@ public class AssayBarcode {
     public static final int VAL_PLATE_DIGITS = 7;
     public static final int VAL_BATCH_DIGITS = 3;
     public static final int VAL_LOT_DIGITS = 3; // with legit exception of 4 digits 8003
+
+    private static final Pattern[] P_ILLEGAL_STRING = new Pattern[]{Pattern.compile("[\\W_]"), Pattern.compile("TST"), Pattern.compile("TEST")};
 
     @Override
     public String toString() {

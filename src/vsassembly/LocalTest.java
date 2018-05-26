@@ -7,7 +7,6 @@ package vsassembly;
 
 import exceptions.InvalidAssayBarcodeException;
 import functions.LotNumberUtil;
-import functions.PrimitiveConn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,15 +16,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -33,6 +27,7 @@ import java.util.logging.Logger;
 import model.LotInfo;
 import model.PillarPlateInfo;
 import model.Product;
+import static model.Product.TST;
 
 /**
  *
@@ -46,7 +41,11 @@ public class LocalTest {
     public static void main(String[] args) {
 //        lotutildemo();
         try {
-            LotNumberUtil.initLotInfoDbForProduct(Product.CEL, true);
+            for (Product p : Product.values()) {
+                if(p.equals(Product.TST))continue;
+                LotNumberUtil.initLotInfoDbForProduct(p, true);
+                LotNumberUtil.getLatestLofInfoCount(p, true);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,24 +53,28 @@ public class LocalTest {
 
     public static void lotutildemo() {
         try {
-            HashMap<String,LotInfo> map=new HashMap<>();
+            HashMap<String, LotInfo> map = new HashMap<>();
             ArrayList<PillarPlateInfo> plates = LotNumberUtil.getAllPlatesForProduct(Product.CEL, true);
-            String key;LotInfo l;
-            for(PillarPlateInfo p:plates){
+            String key;
+            LotInfo l;
+            for (PillarPlateInfo p : plates) {
                 key = p.blindLotNumber();
-                l=map.get(key);
-                if(null==l) l=new LotInfo(Product.CEL, key, new ArrayList<>());
+                l = map.get(key);
+                if (null == l) {
+                    l = new LotInfo(Product.CEL, key, new ArrayList<>());
+                }
                 l.getPlates().add(p);
                 map.put(key, l);
             }
-            
-            for(LotInfo lot:map.values()){
+
+            for (LotInfo lot : map.values()) {
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
-                
+
                 lot.isConsistent();
-                lot.count();System.out.println("lot num: "+lot.getLotNumber());
+                lot.autoCount();
+                System.out.println("lot num: " + lot.getLotNumber());
                 System.out.println(lot.getLotInfoLogEntry());
-                lot.show(lot.getPlates());
+                lot.show();
             }
 //        lotInfoDemo1();
         } catch (SQLException ex) {
@@ -102,17 +105,17 @@ public class LocalTest {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-String s="01234567890";
-char[] chars = s.toCharArray();
-System.out.println("char len = "+chars.length);
-int b=0;
-for(int i=0;i<11;i++){
-    if(0==(i%3)){
-        System.out.println(new String(chars, b, i-b));
-        b=i;
-    }
-}
-System.out.println(new String(chars, b,11-b));
+        String s = "01234567890";
+        char[] chars = s.toCharArray();
+        System.out.println("char len = " + chars.length);
+        int b = 0;
+        for (int i = 0; i < 11; i++) {
+            if (0 == (i % 3)) {
+                System.out.println(new String(chars, b, i - b));
+                b = i;
+            }
+        }
+        System.out.println(new String(chars, b, 11 - b));
     }
 //
 //    public static void resultSetToPillarPlatesTest() throws SQLException {
@@ -135,7 +138,6 @@ System.out.println(new String(chars, b,11-b));
 //            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
 //        }
 //    }
-
 //    public static void productionDBDemo() throws SQLException {
 //        PrimitiveConn.generateRecordThrows(PrimitiveConn.VIBRANT_TEST_TRACKING,"SELECT * FROM `vibrant_test_tracking`.`pillar_plate_info` order by test_name,status,assemble_time;");
 //        System.out.println("==== test separately ====");
@@ -150,7 +152,6 @@ System.out.println(new String(chars, b,11-b));
 //            System.out.println(newRs.getString(1) + "  " + newRs.getString(2) + "  " + newRs.getString(3));
 //        }
 //    }
-
     public static void dateTimeFormaterTest() {
         //        try {
 //            // TODO code application logic here
@@ -162,25 +163,25 @@ System.out.println(new String(chars, b,11-b));
 //int max=2*1024*1024*1024,size=0,ct=1;
 //        System.out.println("max="+max);
 //        System.out.println(max>1043494);
-long currentTimeMillis = System.currentTimeMillis();
-java.util.Date javaUtilDate=new java.util.Date(currentTimeMillis);
-java.sql.Date javaSqlDate=new java.sql.Date(currentTimeMillis);
+        long currentTimeMillis = System.currentTimeMillis();
+        java.util.Date javaUtilDate = new java.util.Date(currentTimeMillis);
+        java.sql.Date javaSqlDate = new java.sql.Date(currentTimeMillis);
 
-LocalDate localDate = javaSqlDate.toLocalDate();
-System.out.println("local date "+localDate);
-System.out.println(localDate.getYear());
-System.out.println(localDate.getMonthValue());
-System.out.println(localDate.getDayOfMonth());
+        LocalDate localDate = javaSqlDate.toLocalDate();
+        System.out.println("local date " + localDate);
+        System.out.println(localDate.getYear());
+        System.out.println(localDate.getMonthValue());
+        System.out.println(localDate.getDayOfMonth());
 
-System.out.println("util date "+javaUtilDate);  //util date Mon Mar 19 12:12:54 PDT 2018
-System.out.println("sql date "+javaSqlDate);    //sql date 2018-03-19
-Instant instantNow = Instant.now();
-System.out.println("instant now "+instantNow);
+        System.out.println("util date " + javaUtilDate);  //util date Mon Mar 19 12:12:54 PDT 2018
+        System.out.println("sql date " + javaSqlDate);    //sql date 2018-03-19
+        Instant instantNow = Instant.now();
+        System.out.println("instant now " + instantNow);
 //        System.out.print(instantNow.get(ChronoField.YEAR_OF_ERA));
 //        System.out.print(instantNow.get(ChronoField.MONTH_OF_YEAR));
 //        System.out.print(instantNow.get(ChronoField.DAY_OF_MONTH));
 
-System.out.println(javaSqlDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyMMdd")));
+        System.out.println(javaSqlDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyMMdd")));
     }
 
     static void fileSeparator(String src, String dest, int nParts) throws FileNotFoundException, IOException {

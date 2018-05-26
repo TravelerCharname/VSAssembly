@@ -35,16 +35,19 @@ public class PillarPlateInfo {
     
     public PillarPlateInfo(String pillar_plate_id, String inventory_barcode, String plate_type, String chip_layout_type, String test_name, 
             String assemble_time, String status, String plate_seq_num, String TSP, String well_plate_id) {
-        this.pillar_plate_id = pillar_plate_id;
-        this.inventory_barcode = inventory_barcode;
-        this.plate_type = plate_type;
-        this.chip_layout_type = chip_layout_type;
-        this.test_name = test_name;
-        this.assemble_time = assemble_time;
-        this.status = Status.getStatusByName(status);
-        this.plate_seq_num = plate_seq_num;
+        this.pillar_plate_id = filter_trim(pillar_plate_id);
+        this.inventory_barcode = filter_trim(inventory_barcode);
+        this.plate_type = filter_trim(plate_type);
+        this.chip_layout_type = filter_trim(chip_layout_type);
+        this.test_name = filter_trim(test_name);
+        this.assemble_time = filter_trim(assemble_time);
+        this.status = Status.getStatusByName(filter_trim(status));
+        this.plate_seq_num = filter_trim(plate_seq_num);
         this.TSP = TSP;
-        this.well_plate_id = well_plate_id;
+        this.well_plate_id = filter_trim(well_plate_id);
+    }
+    private String filter_trim(String fromDB){
+        return (fromDB==null?null:fromDB.trim());
     }
     public static ArrayList<PillarPlateInfo> plateListFromDB(ResultSet rs) throws SQLException{
         if(null==rs) return null;
@@ -79,10 +82,15 @@ public class PillarPlateInfo {
     
     
     public String blindLotNumber(){
-        String s = pillar_plate_id.toUpperCase();
-            s = s.replaceFirst(barcode.getProduct().prefix,"");
+        String s = pillar_plate_id.toUpperCase(); if(null==s) System.out.println("s null");
+       Product product = barcode.getProduct();
+// if(null==product){
+//            System.out.println("null product 4 "+s); return null;
+//        }
+            s = s.replaceFirst(product.prefix,"");
+            s=s.substring(0,3);
             System.out.println(pillar_plate_id+" => "+s);
-            return s.substring(0,3);
+            return s;
     }
     
     private boolean init(){

@@ -24,44 +24,6 @@ public class PrimitiveConn {
     public static Statement stmt;
     public static ResultSet rs;
 
-//    public static void generateRecordThrowsLocal(String tbl_name, String sql) {
-//        try {
-//            if (null != con && !con.isClosed()) {
-//                con.close();
-//            }
-//            con = DriverManager.getConnection(LOCALHOST + tbl_name, LOCAL_USER, LOCAL_PASSWORD);
-////here sonoo is database name, root is username and password
-//            stmt = con.createStatement();
-//            stmt.closeOnCompletion();
-//            rs = stmt.executeQuery(sql);//
-////            while (rs.next()) {
-////                System.out.println(rs.getString(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
-////            }
-////            con.close();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(PrimitiveConn.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
-//    public static void generateRecordThrows(String schema, String sql) {
-//        try {
-//            if (null != con && !con.isClosed()) {
-//                con.close();
-//            }
-//            con = DriverManager.getConnection(SERVER + schema, USER_NAME, PASSWORD);
-////here sonoo is database name, root is username and password
-//            stmt = con.createStatement();
-//            stmt.closeOnCompletion();
-//            rs = stmt.executeQuery(sql);//
-////            while (rs.next()) {
-////                System.out.println(rs.getString(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
-////            }
-////            con.close();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(PrimitiveConn.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
     public static ResultSet generateRecordThrows(String schema, String sql, boolean isLocal) {
         ResultSet result = null;
         try {
@@ -126,13 +88,4 @@ public class PrimitiveConn {
     public static final String LOCAL_PASSWORD = ("LM&L".equals(FolderInitializer.USER) ? "traveler" : "000028");   //"000028";   //"traveler"
     public static final String LOCAL_USER = "root";
 
-//    public static ResultSet lotInfoByProduct(Product p, boolean isLocal) {
-//        String sql = "SELECT * FROM pillar_plate_info.pillar_plate_info WHERE pillar_plate_id like \"" + p.prefix + "%\" order by pillar_plate_id desc;";
-//        if (isLocal) {
-//            generateRecordThrowsLocal(LOCAL_SCHEMA, sql);
-//        } else {
-//            generateRecordThrows(VIBRANT_TEST_TRACKING, sql);
-//        }
-//        return rs;
-//    }
 }

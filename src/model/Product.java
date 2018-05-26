@@ -57,6 +57,9 @@ public enum Product {
     public String prefix;
 
     public static Product lookupByNameOrPartNumberOrSOP(String search) {
+        if(null==search){
+            System.out.println("null search");return null;
+        }
         String k = search.trim();
         if (map.containsKey(k)) {
             return map.get(k);
