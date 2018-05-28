@@ -63,8 +63,8 @@ public class PillarPlateInfo {
             res.add(add);
             i++;
         }
-        System.out.println(i+" of pillar plate(s) was added from result set");
-        System.out.println(res.size()+" of pillar plate(s) was returned");
+//        System.out.println(i+" of pillar plate(s) was added from result set");
+//        System.out.println(res.size()+" of pillar plate(s) was returned");
         return res;
     }
 

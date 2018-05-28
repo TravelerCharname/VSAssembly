@@ -7,6 +7,7 @@ package vsassembly;
 
 import exceptions.InvalidAssayBarcodeException;
 import functions.LotNumberUtil;
+import functions.PrimitiveConn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -39,7 +41,29 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        lotutildemo();
+        lotinfotableinitdemo();
+    }
+
+    public static void onePlateTest() {
+        try {
+            //get plate with iffy name WZMR80010007000007_0
+            String sql="SELECT * FROM pillar_plate_info.pillar_plate_info where pillar_plate_id like \"%WZMR80010007000007_0%\";";
+            ResultSet rs = PrimitiveConn.generateRecordThrows(PrimitiveConn.LOCAL_SCHEMA, sql, true);
+            ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(rs);
+            PillarPlateInfo demo=plates.get(0);
+            //check plate type
+//            System.out.println("demo type = "+demo.plate_type);
+//            System.out.println("demo: "+demo);
+
+System.out.println("barcode: "+demo.getBarcode());
+//debug
+        } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void lotinfotableinitdemo() {
+        //        lotutildemo();
         try {
             for (Product p : Product.values()) {
                 if(p.equals(Product.TST))continue;

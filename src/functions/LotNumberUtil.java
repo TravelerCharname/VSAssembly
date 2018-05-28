@@ -115,8 +115,9 @@ public class LotNumberUtil {
         String key;
         LotInfo l;
         for (PillarPlateInfo p : plates) {
-            key = p.blindLotNumber();
-            System.out.println("lot num " + key);
+            if(null==p.getBarcode()||null==p.getBarcode().getProduct()||p.getBarcode().getProduct().equals(Product.TST)) continue;
+            key = p.getBarcode().lotNumber; //p.blindLotNumber();
+//            System.out.println("lot num " + key);
             l = map.get(key);
             if (null == l) {
                 l = new LotInfo(prod, key, new ArrayList<>());
@@ -131,7 +132,7 @@ public class LotNumberUtil {
             values = lot.getLotInfoDbEntry();
             sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + ";"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
             int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
-            System.out.println(updateRecordThrows + " rows affected");
+//            System.out.println(updateRecordThrows + " rows affected");
         }
 
     }
