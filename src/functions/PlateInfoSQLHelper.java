@@ -17,12 +17,12 @@ import model.Product;
  */
 public class PlateInfoSQLHelper {
     // lot -> product -> resultset -> al<Barcode>
-    public static ArrayList<AssayBarcode> latestLotOfPlateInfo(Product p) throws SQLException{
-       ArrayList<AssayBarcode> al=new ArrayList<>();
-        ResultSet rs = PrimitiveConn.lotInfoByProduct(p, true);
-        while(rs.next()){
-//            AssayBarcode ab=new AssayBarcode
-        }
-       return al;
-    }
+//    public static ArrayList<AssayBarcode> latestLotOfPlateInfo(Product p) throws SQLException{
+//       ArrayList<AssayBarcode> al=new ArrayList<>();
+//        ResultSet rs = PrimitiveConn.lotInfoByProduct(p, true);
+//        while(rs.next()){
+////            AssayBarcode ab=new AssayBarcode
+//        }
+//       return al;
+//    }
 }

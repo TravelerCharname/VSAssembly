@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public enum Product {
     ANA(1, "Vibrant ANA 96 Pillar Plate", "910018", "PROCSOP-003-002","ANAC"),
-    CEL(2, "Celiac Zoomer 96 Pillar Plate", "910019", "PROCSOP-003-001","CELR"),
+    CEL(2, "Celiac Zoomer 96 Pillar Plate", "910019", "PROCSOP-003-001","CELR8"),
     ENA4(3, "Vibrant ENA 96  Pillar Plate", "910024", "PROCSOP-003-004","ENA4R"),
     WZMR(4, "Wheat Zoomer 96 Pillar Plate", "910026", "PROCSOP-003-005","WZMR"),
     ALPG(5, "ALPS IgG + IgM 96 Pillar Plate", "910037", "PROCSOP-003-015","ALPG"),
@@ -57,6 +57,9 @@ public enum Product {
     public String prefix;
 
     public static Product lookupByNameOrPartNumberOrSOP(String search) {
+        if(null==search){
+            System.out.println("null search");return null;
+        }
         String k = search.trim();
         if (map.containsKey(k)) {
             return map.get(k);

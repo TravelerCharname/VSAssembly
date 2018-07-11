@@ -9,3 +9,7 @@ Inhalant
 e.g. incoming materials accession/input
 e.g. modify iqc count
 e.g. 
+
+3. DB
+3.1. lot info
+prod    lot number  quantity    time stamp(for operation)
