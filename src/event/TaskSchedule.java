@@ -29,6 +29,10 @@ public class TaskSchedule {
         name_container.putAll(map);
     }
     
+    // work mode
+    boolean isLoacal;
+    
+    
     //Task 1: monitor
     /*
     data:
