@@ -147,6 +147,34 @@ public class LotInfo {
         return plates;
     }
 
+    public int getApproved() {
+        return approved;
+    }
+
+    public int getAssembled() {
+        return assembled;
+    }
+
+    public int getFailed() {
+        return failed;
+    }
+
+    public int getFinished() {
+        return finished;
+    }
+
+    public int getScanning() {
+        return scanning;
+    }
+
+    public int getTest() {
+        return test;
+    }
+
+    public int getTesting() {
+        return testing;
+    }
+
     public boolean isConsistent(){
         for(PillarPlateInfo p:plates){
             if(!p.blindLotNumber().equals(lotNumber)){

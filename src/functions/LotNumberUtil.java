@@ -151,7 +151,7 @@ public class LotNumberUtil {
                     lotInfo = new LotInfo(prod, lotNumber, null);
                     lotInfo.setCount(r.getInt("approved"), r.getInt("assembled"), r.getInt("failed"), r.getInt("finished"), r.getInt("scanning"), r.getInt("test"), r.getInt("testing"), r.getInt("total"));
 
-                    lotInfo.show();
+//                    lotInfo.show();
                     break;
                 }
             } catch (NumberFormatException e) {
