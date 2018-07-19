@@ -79,8 +79,9 @@ public class PrimitiveConn {
     }
     
     public static final String VIBRANT_TEST_TRACKING = "vibrant_test_tracking";
+    public static final String ASSEMBLE_SCH = "assemble";
     public static final String SERVER = "jdbc:mysql://192.168.10.121:3306/";
-    public static final String PASSWORD = "vibrant";
+    public static final String PASSWORD = "000028";
     public static final String USER_NAME = "hamilton";
 
     public static final String LOCAL_SCHEMA = "pillar_plate_info";

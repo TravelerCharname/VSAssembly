@@ -7,6 +7,7 @@ package functions;
 
 import com.google.gson.Gson;
 import static functions.PrimitiveConn.VIBRANT_TEST_TRACKING;
+import static functions.PrimitiveConn.ASSEMBLE_SCH;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -125,7 +126,7 @@ public class LotNumberUtil {
             l.getPlates().add(p);
             map.put(key, l);
         }
-        String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
+        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
         String sql, values;
         for (LotInfo lot : map.values()) {
             lot.autoCount();
@@ -138,7 +139,7 @@ public class LotNumberUtil {
     }
 
     public static LotInfo getLatestLofInfoCount(Product prod, boolean isLocal) throws SQLException {
-        String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
+        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
 
         String sql = "SELECT * FROM " + schema + ".lotinfo WHERE product like \"" + prod.plateName + "%\" order by lot_number desc;";
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
