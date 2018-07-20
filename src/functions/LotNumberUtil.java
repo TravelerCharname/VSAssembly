@@ -145,18 +145,21 @@ public class LotNumberUtil {
         String lotNumber = null;
         LotInfo lotInfo = null;
         while (r.next()) {
+            System.out.println("processing "+prod.prefix+r.getString("lot_number")+r.getInt("approved")+" "+ r.getInt("assembled")+" "+ r.getInt("failed")+ r.getInt("finished")+ r.getInt("scanning")+ r.getInt("test")+ r.getInt("testing")+ r.getInt("total"));
             lotNumber = r.getString("lot_number");
             try {
-                if (Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000) {
+                if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000)||(Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
                     lotInfo = new LotInfo(prod, lotNumber, null);
                     lotInfo.setCount(r.getInt("approved"), r.getInt("assembled"), r.getInt("failed"), r.getInt("finished"), r.getInt("scanning"), r.getInt("test"), r.getInt("testing"), r.getInt("total"));
 
-//                    lotInfo.show();
+                    lotInfo.show();
+                    System.out.println("got it!");
                     break;
                 }
             } catch (NumberFormatException e) {
             }
         }
+        if(null==lotInfo) System.out.println("no match for "+prod.plateName);
         return lotInfo;
     }
 }

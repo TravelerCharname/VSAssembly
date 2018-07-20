@@ -218,13 +218,13 @@ public class LotInfo {
 
     public void setCount(int approved,int assembled,int failed,int finished,int scanning,int test,int testing,int total){
         this.approved=approved;
-        this.approved=assembled;
-        this.approved=failed;
-        this.approved=finished;
-        this.approved=scanning;
-        this.approved=test;
-        this.approved=testing;
-        this.approved=total;
+        this.assembled=assembled;
+        this.failed=failed;
+        this.finished=finished;
+        this.scanning=scanning;
+        this.test=test;
+        this.testing=testing;
+        this.total=total;
     }
     public void count1(PillarPlateInfo p) {
         switch (p.status) {
