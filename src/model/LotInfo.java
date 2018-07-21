@@ -108,7 +108,7 @@ public class LotInfo {
         System.out.println("lot number: " + lotNumber);
         System.out.println("lot size: " + total);
         System.out.println("approved: " + approved);
-        System.out.println("aassembled: " + assembled);
+        System.out.println("assembled: " + assembled);
         System.out.println("failed: " + failed);
         System.out.println("finished: " + finished);
 //        System.out.println("in use: " + inUse);
@@ -116,7 +116,7 @@ public class LotInfo {
         System.out.println("test: " + test);
         System.out.println("testing: " + testing);
         System.out.println("scanning: " + scanning);
-        System.out.println("verify: total=inUse+inStock+finished");
+//        System.out.println("verify: total=inUse+inStock+finished");
         if (plates != null) {
             plates.sort(new Comparator<PillarPlateInfo>() {
                 @Override

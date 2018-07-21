@@ -141,18 +141,18 @@ public class TaskSchedule extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        test();
+        checkPlateInventory(false);
 //        checkLatestLotInventory();
     }
 
-    static void test() {
+    static void checkPlateInventory(boolean isLocal) {
         String header = "", info = "";
         try {
             for (Product p : Product.values()) {
                 if (p.equals(Product.TST)) {
                     continue;
                 }
-                LotInfo lot = LotNumberUtil.getLatestLofInfoCount(p, true);
+                LotInfo lot = LotNumberUtil.getLatestLofInfoCount(p, isLocal);
                 if (null == lot) {
                     System.out.println("null " + p.plateName);
                     continue;
@@ -174,5 +174,5 @@ public class TaskSchedule extends Application {
             Logger.getLogger(TaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public static final int MIN_REQUIRE_QUANT = 100;
+    public static final int MIN_REQUIRE_QUANT = 10;
 }
