@@ -141,7 +141,7 @@ public class TaskSchedule extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        checkPlateInventory(false);
+        test();
 //        checkLatestLotInventory();
     }
 
