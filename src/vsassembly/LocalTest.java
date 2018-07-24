@@ -67,7 +67,7 @@ System.out.println("barcode: "+demo.getBarcode());
         try {
             for (Product p : Product.values()) {
                 if(p.equals(Product.TST))continue;
-//                LotNumberUtil.initLotInfoDbForProduct(p, true);
+                LotNumberUtil.initLotInfoDbForProduct(p, true);
                 LotNumberUtil.getLatestLofInfoCount(p, true);
             }
         } catch (SQLException ex) {

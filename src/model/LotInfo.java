@@ -6,6 +6,7 @@
 package model;
 
 import exceptions.InvalidAssayBarcodeException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -29,6 +30,7 @@ public class LotInfo {
     private int testing;
 
     private ArrayList<PillarPlateInfo> plates;
+    private Date last_modified;
 
     public LotInfo() {
     }
@@ -116,6 +118,7 @@ public class LotInfo {
         System.out.println("test: " + test);
         System.out.println("testing: " + testing);
         System.out.println("scanning: " + scanning);
+        System.out.println("last modified: " + last_modified);
 //        System.out.println("verify: total=inUse+inStock+finished");
         if (plates != null) {
             plates.sort(new Comparator<PillarPlateInfo>() {
@@ -175,6 +178,14 @@ public class LotInfo {
         return testing;
     }
 
+    public Date getLast_modified() {
+        return last_modified;
+    }
+
+    public void setLast_modified(Date last_modified) {
+        this.last_modified = last_modified;
+    }
+
     public boolean isConsistent(){
         for(PillarPlateInfo p:plates){
             if(!p.blindLotNumber().equals(lotNumber)){
@@ -213,6 +224,7 @@ public class LotInfo {
                     break;
             }
             this.total++;
+            this.last_modified=p.assemble_time;
         }
     }
 

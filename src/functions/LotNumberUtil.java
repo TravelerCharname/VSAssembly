@@ -116,7 +116,9 @@ public class LotNumberUtil {
         String key;
         LotInfo l;
         for (PillarPlateInfo p : plates) {
-            if(null==p.getBarcode()||null==p.getBarcode().getProduct()||p.getBarcode().getProduct().equals(Product.TST)) continue;
+            if (null == p.getBarcode() || null == p.getBarcode().getProduct() || p.getBarcode().getProduct().equals(Product.TST)) {
+                continue;
+            }
             key = p.getBarcode().lotNumber; //p.blindLotNumber();
 //            System.out.println("lot num " + key);
             l = map.get(key);
@@ -124,6 +126,13 @@ public class LotNumberUtil {
                 l = new LotInfo(prod, key, new ArrayList<>());
             }
             l.getPlates().add(p);
+            if (null == l.getLast_modified()) {
+                l.setLast_modified(p.assemble_time);
+//                System.out.println(l.getLotNumber()+" last mod set to "+p.assemble_time);
+            } else {
+                l.setLast_modified((l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+//                System.out.println(l.getLotNumber()+" last mod set to "+(l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+            }
             map.put(key, l);
         }
         String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
@@ -139,6 +148,8 @@ public class LotNumberUtil {
     }
 
     public static LotInfo getLatestLofInfoCount(Product prod, boolean isLocal) throws SQLException {
+        System.out.println("searching latest lot for " + prod.prefix);
+
         String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
 
         String sql = "SELECT * FROM " + schema + ".lotinfo WHERE product like \"" + prod.plateName + "%\" order by lot_number desc;";
@@ -146,21 +157,23 @@ public class LotNumberUtil {
         String lotNumber = null;
         LotInfo lotInfo = null;
         while (r.next()) {
-            System.out.println("processing "+prod.prefix+r.getString("lot_number")+r.getInt("approved")+" "+ r.getInt("assembled")+" "+ r.getInt("failed")+ r.getInt("finished")+ r.getInt("scanning")+ r.getInt("test")+ r.getInt("testing")+ r.getInt("total"));
             lotNumber = r.getString("lot_number");
+            System.out.print(lotNumber + " ");
             try {
-                if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000)||(Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
+                if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000) || (Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
+                    System.out.println("Bingo! " + lotNumber);
                     lotInfo = new LotInfo(prod, lotNumber, null);
                     lotInfo.setCount(r.getInt("approved"), r.getInt("assembled"), r.getInt("failed"), r.getInt("finished"), r.getInt("scanning"), r.getInt("test"), r.getInt("testing"), r.getInt("total"));
 
                     lotInfo.show();
-                    System.out.println("got it!");
                     break;
                 }
             } catch (NumberFormatException e) {
             }
         }
-        if(null==lotInfo) System.out.println("no match for "+prod.plateName);
+        if (null == lotInfo) {
+            System.out.println("can't find the latest lot info for " + prod.plateName);
+        }
         return lotInfo;
     }
 }

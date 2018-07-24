@@ -5,6 +5,8 @@
  */
 package model;
 
+import functions.DocDateUtil;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class PillarPlateInfo {
     public String plate_type;
     public String chip_layout_type;
     public String test_name;
-    public String assemble_time;
+    public java.sql.Date assemble_time;
     public Status status;
     
     // left NULL
@@ -34,13 +36,13 @@ public class PillarPlateInfo {
 //    private String plateId;
     
     public PillarPlateInfo(String pillar_plate_id, String inventory_barcode, String plate_type, String chip_layout_type, String test_name, 
-            String assemble_time, String status, String plate_seq_num, String TSP, String well_plate_id) {
+            java.sql.Date assemble_time, String status, String plate_seq_num, String TSP, String well_plate_id) {
         this.pillar_plate_id = filter_trim(pillar_plate_id);
         this.inventory_barcode = filter_trim(inventory_barcode);
         this.plate_type = filter_trim(plate_type);
         this.chip_layout_type = filter_trim(chip_layout_type);
         this.test_name = filter_trim(test_name);
-        this.assemble_time = filter_trim(assemble_time);
+        this.assemble_time = assemble_time;
         this.status = Status.getStatusByName(filter_trim(status));
         this.plate_seq_num = filter_trim(plate_seq_num);
         this.TSP = TSP;
@@ -56,7 +58,7 @@ public class PillarPlateInfo {
         int i=0;
         while(rs.next()){
             add=new PillarPlateInfo(rs.getString("pillar_plate_id"), rs.getString("inventory_barcode"), rs.getString("plate_type"), rs.getString("chip_layout_type"),rs.getString("test_name"), 
-                    rs.getString("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
+                    rs.getDate("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
             add.init();
 //            System.out.println(add.status);
 //            System.out.println(add);
