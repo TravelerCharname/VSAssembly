@@ -18,6 +18,7 @@ import java.util.Properties;
 import model.LotInfo;
 import model.Product;
 import static functions.PrimitiveConn.LOCAL_SCHEMA;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import model.PillarPlateInfo;
@@ -52,7 +53,7 @@ public class LotNumberUtil {
         return dest;
     }
 
-    public static final String INSERT_FIELDS = " (`product`,`lot_number`,`total`,`assembled`,`approved`,`failed`,`finished`,`test`,`testing`,`scanning`) ";
+    public static final String INSERT_FIELDS = " (`product`,`lot_number`,`total`,`assembled`,`approved`,`failed`,`finished`,`test`,`testing`,`scanning`,`last_modified`) ";
 
     /*
     create lot info table
@@ -156,13 +157,17 @@ public class LotNumberUtil {
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
         String lotNumber = null;
         LotInfo lotInfo = null;
+        Date date;
         while (r.next()) {
             lotNumber = r.getString("lot_number");
-            System.out.print(lotNumber + " ");
+            
+            date = r.getDate("last_modified");
+            System.out.print(lotNumber + " last modified @ "+date);
             try {
                 if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000) || (Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
                     System.out.println("Bingo! " + lotNumber);
                     lotInfo = new LotInfo(prod, lotNumber, null);
+                    lotInfo.setLast_modified(date);
                     lotInfo.setCount(r.getInt("approved"), r.getInt("assembled"), r.getInt("failed"), r.getInt("finished"), r.getInt("scanning"), r.getInt("test"), r.getInt("testing"), r.getInt("total"));
 
                     lotInfo.show();

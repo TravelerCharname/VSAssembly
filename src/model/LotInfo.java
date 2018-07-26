@@ -30,7 +30,7 @@ public class LotInfo {
     private int testing;
 
     private ArrayList<PillarPlateInfo> plates;
-    private Date last_modified;
+    private java.sql.Date last_modified;
 
     public LotInfo() {
     }
@@ -102,7 +102,7 @@ public class LotInfo {
         return prod.name() + "\t" + this.lotNumber + "\t" + this.total+ "\t" + this.assembled + "\t" + this.approved+ "\t" + this.failed + "\t" + this.finished+ "\t" + this.test + "\t" + this.testing + "\t" + this.scanning;
     }
     public String getLotInfoDbEntry() {
-        return "('"+prod.plateName + "','" +lotNumber + "','" + this.total  + "','" + this.assembled  + "','" + this.approved + "','" +this.failed  + "','" + this.finished + "','" + this.test  + "','" + this.testing  + "','" + this.scanning+"')";
+        return "('"+prod.plateName + "','" +lotNumber + "','" + this.total  + "','" + this.assembled  + "','" + this.approved + "','" +this.failed  + "','" + this.finished + "','" + this.test  + "','" + this.testing  + "','" + this.scanning+ "','" + this.last_modified+"')";
     }
     
     public void show() {    //ArrayList<PillarPlateInfo> toShow
@@ -182,7 +182,8 @@ public class LotInfo {
         return last_modified;
     }
 
-    public void setLast_modified(Date last_modified) {
+    public void setLast_modified(java.sql.Date last_modified) {
+        if(null==last_modified) System.out.println("last modified set Null");
         this.last_modified = last_modified;
     }
 
