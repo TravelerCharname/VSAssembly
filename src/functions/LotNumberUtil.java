@@ -141,7 +141,17 @@ public class LotNumberUtil {
         for (LotInfo lot : map.values()) {
             lot.autoCount();
             values = lot.getLotInfoDbEntry();
-            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + ";"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + 
+                    "on duplicate key update " +
+"total=values(total)," +
+"assembled=values(assembled)," +
+"approved=values(approved)," +
+"failed=values(failed)," +
+"finished=values(finished)," +
+"test=values(test)," +
+"testing=values(testing)," +
+"scanning=values(scanning)," +
+"last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
             int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
 //            System.out.println(updateRecordThrows + " rows affected");
         }
