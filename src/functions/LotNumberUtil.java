@@ -21,6 +21,7 @@ import static functions.PrimitiveConn.LOCAL_SCHEMA;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import model.PillarPlateInfo;
 
 /**
@@ -87,8 +88,30 @@ public class LotNumberUtil {
     /*
     insert on duplicate update, return the number of rows affected
      */
-    public static int batchInsertUpdateLotinfo() {
-        return -1;
+    public static int batchInsertUpdateLotinfo(Collection<LotInfo> collection, boolean isLocal) {
+        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
+        String sql, values;
+        int count = 0, updateRecordThrows;
+        for (LotInfo lot : collection) {
+            lot.autoCount();
+            values = lot.getLotInfoDbEntry();
+            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values
+                    + "on duplicate key update "
+                    + "total=values(total),"
+                    + "assembled=values(assembled),"
+                    + "approved=values(approved),"
+                    + "failed=values(failed),"
+                    + "finished=values(finished),"
+                    + "test=values(test),"
+                    + "testing=values(testing),"
+                    + "scanning=values(scanning),"
+                    + "last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+//            System.out.println("updating " + lot.getProd() + " lot " + lot.getLotNumber());
+            updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+//            System.out.println(updateRecordThrows + " rows affected");
+            count += updateRecordThrows;
+        }
+        return count;
     }
 
     public static ArrayList<PillarPlateInfo> getAllPlatesForProduct(Product p, boolean isLocal) throws SQLException {
@@ -111,11 +134,39 @@ public class LotNumberUtil {
      * @param isLocal
      * @throws java.sql.SQLException
      */
-    public static void initLotInfoDbForProduct(Product prod, boolean isLocal) throws SQLException {
+    public static void getLotInfoDbForProduct(Product prod, boolean isLocal) throws SQLException {
+        HashMap<String, LotInfo> map = getAllNonTestLot(isLocal);
+        batchInsertUpdateLotinfo(map.values(), isLocal);
+//        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH); 
+//        String sql, values;
+//        for (LotInfo lot : map.values()) {
+//            lot.autoCount();
+//            values = lot.getLotInfoDbEntry();
+//            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values
+//                    + "on duplicate key update "
+//                    + "total=values(total),"
+//                    + "assembled=values(assembled),"
+//                    + "approved=values(approved),"
+//                    + "failed=values(failed),"
+//                    + "finished=values(finished),"
+//                    + "test=values(test),"
+//                    + "testing=values(testing),"
+//                    + "scanning=values(scanning),"
+//                    + "last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+//            int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+////            System.out.println(updateRecordThrows + " rows affected");
+//        }
+
+    }
+
+    public static HashMap<String, LotInfo> getLotInfoForProduct(Product prod, boolean isLocal) throws SQLException {
         HashMap<String, LotInfo> map = new HashMap<>();
-        ArrayList<PillarPlateInfo> plates = getAllPlatesForProduct(prod, isLocal);
         String key;
         LotInfo l;
+        ArrayList<PillarPlateInfo> plates;
+
+        plates = getAllPlatesForProduct(prod, isLocal);
+
         for (PillarPlateInfo p : plates) {
             if (null == p.getBarcode() || null == p.getBarcode().getProduct() || p.getBarcode().getProduct().equals(Product.TST)) {
                 continue;
@@ -136,26 +187,43 @@ public class LotNumberUtil {
             }
             map.put(key, l);
         }
-        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
-        String sql, values;
-        for (LotInfo lot : map.values()) {
-            lot.autoCount();
-            values = lot.getLotInfoDbEntry();
-            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + 
-                    "on duplicate key update " +
-"total=values(total)," +
-"assembled=values(assembled)," +
-"approved=values(approved)," +
-"failed=values(failed)," +
-"finished=values(finished)," +
-"test=values(test)," +
-"testing=values(testing)," +
-"scanning=values(scanning)," +
-"last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
-            int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
-//            System.out.println(updateRecordThrows + " rows affected");
-        }
 
+        return map;
+    }
+
+    public static HashMap<String, LotInfo> getAllNonTestLot(boolean isLocal) throws SQLException {
+        HashMap<String, LotInfo> map = new HashMap<>();
+        String key;
+        LotInfo l;
+        ArrayList<PillarPlateInfo> plates;
+        for (Product prod : Product.values()) {
+            if (prod.equals(Product.TST)) {
+                continue;
+            }
+            plates = getAllPlatesForProduct(prod, isLocal);
+
+            for (PillarPlateInfo p : plates) {
+                if (null == p.getBarcode() || null == p.getBarcode().getProduct() || p.getBarcode().getProduct().equals(Product.TST)) {
+                    continue;
+                }
+                key = p.getBarcode().lotNumber; //p.blindLotNumber();
+//            System.out.println("lot num " + key);
+                l = map.get(key);
+                if (null == l) {
+                    l = new LotInfo(prod, key, new ArrayList<>());
+                }
+                l.getPlates().add(p);
+                if (null == l.getLast_modified()) {
+                    l.setLast_modified(p.assemble_time);
+//                System.out.println(l.getLotNumber()+" last mod set to "+p.assemble_time);
+                } else {
+                    l.setLast_modified((l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+//                System.out.println(l.getLotNumber()+" last mod set to "+(l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+                }
+                map.put(key, l);
+            }
+        }
+        return map;
     }
 
     public static LotInfo getLatestLofInfoCount(Product prod, boolean isLocal) throws SQLException {
@@ -170,9 +238,9 @@ public class LotNumberUtil {
         Date date;
         while (r.next()) {
             lotNumber = r.getString("lot_number");
-            
+
             date = r.getDate("last_modified");
-            System.out.print(lotNumber + " last modified @ "+date);
+            System.out.print(lotNumber + " last modified @ " + date);
             try {
                 if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000) || (Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
                     System.out.println("Bingo! " + lotNumber);

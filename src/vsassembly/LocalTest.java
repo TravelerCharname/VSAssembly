@@ -41,7 +41,20 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        lotinfotableinitdemo();
+        try {
+            //        lotinfotableinitdemo();
+            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(true);
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
+//            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
+            for (Product p : Product.values()) {
+                if (p.equals(Product.TST)) {
+                    continue;
+                }
+                LotNumberUtil.getLatestLofInfoCount(p, true);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void onePlateTest() {
@@ -64,10 +77,11 @@ System.out.println("barcode: "+demo.getBarcode());
 
     public static void lotinfotableinitdemo() {
         //        lotutildemo();
+        
         try {
             for (Product p : Product.values()) {
                 if(p.equals(Product.TST))continue;
-                LotNumberUtil.initLotInfoDbForProduct(p, true);
+                LotNumberUtil.getLotInfoDbForProduct(p, true);
                 LotNumberUtil.getLatestLofInfoCount(p, true);
             }
         } catch (SQLException ex) {

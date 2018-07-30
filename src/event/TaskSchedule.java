@@ -54,30 +54,25 @@ public class TaskSchedule extends Application {
     lot info table
      */
     public static void updateLotInfoTableForAllProduct() {
+
         try {
+            //        lotinfotableinitdemo();
+            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(true);
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
             for (Product p : Product.values()) {
                 if (p.equals(Product.TST)) {
                     continue;
                 }
-                LotNumberUtil.initLotInfoDbForProduct(p, false);
+                LotNumberUtil.getLatestLofInfoCount(p, false);
             }
         } catch (SQLException ex) {
             Logger.getLogger(TaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
-    public static void updateLotInfoTableLocalForAllProduct() {
-        try {
-            for (Product p : Product.values()) {
-                if (p.equals(Product.TST)) {
-                    continue;
-                }
-                LotNumberUtil.initLotInfoDbForProduct(p, true);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(TaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    
 
     //Task 2: log daily
     //Task 3: alert daily
