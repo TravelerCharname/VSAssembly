@@ -106,9 +106,9 @@ public class LotNumberUtil {
                     + "testing=values(testing),"
                     + "scanning=values(scanning),"
                     + "last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
-//            System.out.println("updating " + lot.getProd() + " lot " + lot.getLotNumber());
+            System.out.println("updating " + lot.getProd() + " lot " + lot.getLotNumber());
             updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
-//            System.out.println(updateRecordThrows + " rows affected");
+            System.out.println(updateRecordThrows + " rows affected");
             count += updateRecordThrows;
         }
         return count;
@@ -119,7 +119,11 @@ public class LotNumberUtil {
 
         String sql = "SELECT * FROM " + schema + ".pillar_plate_info WHERE pillar_plate_id like \"" + p.prefix + "%\" order by pillar_plate_id desc;";
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
+        
         ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(r);
+        int fetchSize = plates.size();  //r.getFetchSize();<- doesn't work
+        System.out.println(fetchSize+" fetched for " + p.prefix +" from "+schema);
+        if(0>=fetchSize) System.out.println("sql = "+sql);
         return plates;
     }
 
@@ -156,6 +160,53 @@ public class LotNumberUtil {
 //            int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
 ////            System.out.println(updateRecordThrows + " rows affected");
 //        }
+
+    }
+    
+    public static void initLotInfoDbForProduct(Product prod, boolean isLocal) throws SQLException {
+        HashMap<String, LotInfo> map = new HashMap<>();
+        ArrayList<PillarPlateInfo> plates = getAllPlatesForProduct(prod, isLocal);
+        String key;
+        LotInfo l;
+        for (PillarPlateInfo p : plates) {
+            if (null == p.getBarcode() || null == p.getBarcode().getProduct() || p.getBarcode().getProduct().equals(Product.TST)) {
+                continue;
+            }
+            key = p.getBarcode().lotNumber; //p.blindLotNumber();
+//            System.out.println("lot num " + key);
+            l = map.get(key);
+            if (null == l) {
+                l = new LotInfo(prod, key, new ArrayList<>());
+            }
+            l.getPlates().add(p);
+            if (null == l.getLast_modified()) {
+                l.setLast_modified(p.assemble_time);
+//                System.out.println(l.getLotNumber()+" last mod set to "+p.assemble_time);
+            } else {
+                l.setLast_modified((l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+//                System.out.println(l.getLotNumber()+" last mod set to "+(l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
+            }
+            map.put(key, l);
+        }
+        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
+        String sql, values;
+        for (LotInfo lot : map.values()) {
+            lot.autoCount();
+            values = lot.getLotInfoDbEntry();
+            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + 
+                    "on duplicate key update " +
+"total=values(total)," +
+"assembled=values(assembled)," +
+"approved=values(approved)," +
+"failed=values(failed)," +
+"finished=values(finished)," +
+"test=values(test)," +
+"testing=values(testing)," +
+"scanning=values(scanning)," +
+"last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+            int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+//            System.out.println(updateRecordThrows + " rows affected");
+        }
 
     }
 
@@ -206,11 +257,13 @@ public class LotNumberUtil {
                 if (null == p.getBarcode() || null == p.getBarcode().getProduct() || p.getBarcode().getProduct().equals(Product.TST)) {
                     continue;
                 }
-                key = p.getBarcode().lotNumber; //p.blindLotNumber();
+                String lotNumber = p.getBarcode().lotNumber;
+                key = prod.prefix+lotNumber; //p.blindLotNumber();
 //            System.out.println("lot num " + key);
                 l = map.get(key);
                 if (null == l) {
-                    l = new LotInfo(prod, key, new ArrayList<>());
+                    
+                    l = new LotInfo(prod, lotNumber, new ArrayList<>());
                 }
                 l.getPlates().add(p);
                 if (null == l.getLast_modified()) {

@@ -57,8 +57,8 @@ public class TaskSchedule extends Application {
 
         try {
             //        lotinfotableinitdemo();
-            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(true);
-            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
+            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(false);
+//            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
             LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
             for (Product p : Product.values()) {
                 if (p.equals(Product.TST)) {
@@ -136,7 +136,8 @@ public class TaskSchedule extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        checkPlateInventory(false);
+        updateLotInfoTableForAllProduct();
+//        checkPlateInventory(false);
 //        checkLatestLotInventory();
     }
 

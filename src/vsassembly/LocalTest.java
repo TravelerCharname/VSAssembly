@@ -41,17 +41,23 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            //        lotinfotableinitdemo();
-            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(true);
-            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
-//            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
+//                 lotinfotableinitdemo();
+         try {
+           
+            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(false);
+            int i=0;
+            for(String key:map.keySet()){
+                System.out.println(i+++" "+key+" : "+map.get(key).getLotInfoDbEntry());
+            }
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
+            
             for (Product p : Product.values()) {
                 if (p.equals(Product.TST)) {
                     continue;
                 }
-                LotNumberUtil.getLatestLofInfoCount(p, true);
+                LotNumberUtil.getLatestLofInfoCount(p, false);
             }
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -81,8 +87,8 @@ System.out.println("barcode: "+demo.getBarcode());
         try {
             for (Product p : Product.values()) {
                 if(p.equals(Product.TST))continue;
-                LotNumberUtil.getLotInfoDbForProduct(p, true);
-                LotNumberUtil.getLatestLofInfoCount(p, true);
+                LotNumberUtil.initLotInfoDbForProduct(p, false);
+                LotNumberUtil.getLatestLofInfoCount(p, false);
             }
         } catch (SQLException ex) {
             Logger.getLogger(LocalTest.class.getName()).log(Level.SEVERE, null, ex);
