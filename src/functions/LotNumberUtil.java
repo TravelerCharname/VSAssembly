@@ -119,11 +119,13 @@ public class LotNumberUtil {
 
         String sql = "SELECT * FROM " + schema + ".pillar_plate_info WHERE pillar_plate_id like \"" + p.prefix + "%\" order by pillar_plate_id desc;";
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
-        
+
         ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(r);
         int fetchSize = plates.size();  //r.getFetchSize();<- doesn't work
-        System.out.println(fetchSize+" fetched for " + p.prefix +" from "+schema);
-        if(0>=fetchSize) System.out.println("sql = "+sql);
+        System.out.println(fetchSize + " fetched for " + p.prefix + " from " + schema);
+        if (0 >= fetchSize) {
+            System.out.println("sql = " + sql);
+        }
         return plates;
     }
 
@@ -162,7 +164,7 @@ public class LotNumberUtil {
 //        }
 
     }
-    
+
     public static void initLotInfoDbForProduct(Product prod, boolean isLocal) throws SQLException {
         HashMap<String, LotInfo> map = new HashMap<>();
         ArrayList<PillarPlateInfo> plates = getAllPlatesForProduct(prod, isLocal);
@@ -193,17 +195,17 @@ public class LotNumberUtil {
         for (LotInfo lot : map.values()) {
             lot.autoCount();
             values = lot.getLotInfoDbEntry();
-            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values + 
-                    "on duplicate key update " +
-"total=values(total)," +
-"assembled=values(assembled)," +
-"approved=values(approved)," +
-"failed=values(failed)," +
-"finished=values(finished)," +
-"test=values(test)," +
-"testing=values(testing)," +
-"scanning=values(scanning)," +
-"last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+            sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values
+                    + "on duplicate key update "
+                    + "total=values(total),"
+                    + "assembled=values(assembled),"
+                    + "approved=values(approved),"
+                    + "failed=values(failed),"
+                    + "finished=values(finished),"
+                    + "test=values(test),"
+                    + "testing=values(testing),"
+                    + "scanning=values(scanning),"
+                    + "last_modified=values(last_modified);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
             int updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
 //            System.out.println(updateRecordThrows + " rows affected");
         }
@@ -258,11 +260,11 @@ public class LotNumberUtil {
                     continue;
                 }
                 String lotNumber = p.getBarcode().lotNumber;
-                key = prod.prefix+lotNumber; //p.blindLotNumber();
+                key = prod.prefix + lotNumber; //p.blindLotNumber();
 //            System.out.println("lot num " + key);
                 l = map.get(key);
                 if (null == l) {
-                    
+
                     l = new LotInfo(prod, lotNumber, new ArrayList<>());
                 }
                 l.getPlates().add(p);
@@ -283,8 +285,9 @@ public class LotNumberUtil {
         System.out.println("searching latest lot for " + prod.prefix);
 
         String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
+        String sorter = " order by lot_number " + (isLocal ? _LAST_MODIFIED_SORTER : "") + " desc;";
 
-        String sql = "SELECT * FROM " + schema + ".lotinfo WHERE product like \"" + prod.plateName + "%\" order by lot_number desc;";
+        String sql = "SELECT * FROM " + schema + ".lotinfo WHERE product like \"" + prod.plateName + "%\"" + sorter;
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
         String lotNumber = null;
         LotInfo lotInfo = null;
@@ -293,9 +296,10 @@ public class LotNumberUtil {
             lotNumber = r.getString("lot_number");
 
             date = r.getDate("last_modified");
-            System.out.print(lotNumber + " last modified @ " + date);
+            System.out.print(lotNumber + " last modified @ " + date + "... ");
             try {
                 if ((Integer.parseInt(lotNumber) >= 0 && Integer.parseInt(lotNumber) <= 1000) || (Integer.parseInt(lotNumber) >= 8000 && Integer.parseInt(lotNumber) <= 9000)) {
+                    System.out.println("");
                     System.out.println("Bingo! " + lotNumber);
                     lotInfo = new LotInfo(prod, lotNumber, null);
                     lotInfo.setLast_modified(date);
@@ -312,4 +316,5 @@ public class LotNumberUtil {
         }
         return lotInfo;
     }
+    private static final String _LAST_MODIFIED_SORTER = ", last_modified";
 }

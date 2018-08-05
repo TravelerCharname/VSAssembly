@@ -41,9 +41,14 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//                 lotinfotableinitdemo();
-         try {
-           
+        dateTimeFormaterTest();
+//        checkAndUpdateInventoryWithBackup();
+    }
+
+    private static void checkAndUpdateInventoryWithBackup() {
+        //                 lotinfotableinitdemo();
+        try {
+            
             HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(false);
             int i=0;
             for(String key:map.keySet()){
