@@ -28,7 +28,10 @@ public class LotInfo {
     private int scanning;
     private int test;
     private int testing;
-
+    
+    private AssayBarcode from;
+    private AssayBarcode to;
+    
     private ArrayList<PillarPlateInfo> plates;
     private java.sql.Date last_modified;
 
@@ -102,7 +105,7 @@ public class LotInfo {
         return prod.name() + "\t" + this.lotNumber + "\t" + this.total+ "\t" + this.assembled + "\t" + this.approved+ "\t" + this.failed + "\t" + this.finished+ "\t" + this.test + "\t" + this.testing + "\t" + this.scanning;
     }
     public String getLotInfoDbEntry() {
-        return "('"+prod.plateName + "','" +lotNumber + "','" + this.total  + "','" + this.assembled  + "','" + this.approved + "','" +this.failed  + "','" + this.finished + "','" + this.test  + "','" + this.testing  + "','" + this.scanning+ "','" + this.last_modified+"')";
+        return "('"+prod.plateName + "','" +lotNumber + "','" +from.formAssayBarcode()+ "','" +to.formAssayBarcode()+ "','" + this.total  + "','" + this.assembled  + "','" + this.approved + "','" +this.failed  + "','" + this.finished + "','" + this.test  + "','" + this.testing  + "','" + this.scanning+ "','" + this.last_modified+"')";
     }
     
     public void show() {    //ArrayList<PillarPlateInfo> toShow
@@ -187,6 +190,49 @@ public class LotInfo {
         this.last_modified = last_modified;
     }
 
+    public String getFrom() {
+        return from.formAssayBarcode();
+    }
+
+    public void setFrom(AssayBarcode from) {
+        this.from = from;
+    }
+    public void updateFrom(AssayBarcode from) {
+        if(null==from) return;
+        try{
+//            System.out.println("this.from = null? "+(this.from==null));
+//            System.out.println("input from = null? "+(from==null));
+            int old = (this.from==null?999999:Integer.parseInt(this.from.plateId));
+            int nu = Integer.parseInt(from.plateId);
+            if(old>=nu){
+                this.from=from;
+            }
+        }catch(NumberFormatException e){
+            System.out.println("unable to parse "+from);
+        }
+    }
+
+    public String getTo() {
+        return to.formAssayBarcode();
+    }
+
+    public void setTo(AssayBarcode to) {
+        this.to = to;
+    }
+    public void updateTo(AssayBarcode to) {
+        try{
+//            System.out.println("this.to = null? "+(this.to==null));
+//            System.out.println("input to = null? "+(to==null));
+            int old = (this.to==null?-1:Integer.parseInt(this.to.plateId));
+            int nu = Integer.parseInt(to.plateId);
+            if(old<=nu){
+                this.to=to;
+            }
+        }catch(NumberFormatException e){
+            
+        }
+    }
+    
     public boolean isConsistent(){
         for(PillarPlateInfo p:plates){
             if(!p.blindLotNumber().equals(lotNumber)){

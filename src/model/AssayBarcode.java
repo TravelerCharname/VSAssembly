@@ -77,7 +77,7 @@ public class AssayBarcode {
                 this.lotNumber = s.substring(0, 3);
                 this.batchNumber = s.substring(3, mark);
             }
-            this.plateId = s.substring(mark);
+            this.plateId = s.replaceFirst(s, lotNumber).replaceFirst(s, batchNumber);    //s.substring(mark);
         }
     }
 
@@ -141,7 +141,7 @@ public class AssayBarcode {
             } catch (java.lang.StringIndexOutOfBoundsException e) {
                 System.out.println(pillarPlateBarcode + " izzue");
             }
-            ab.plateId = s.substring(mark);
+            ab.plateId = s.substring(s.length()-6);
 
             ab.validateDigits();
         }

@@ -41,8 +41,8 @@ public class LocalTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        dateTimeFormaterTest();
-//        checkAndUpdateInventoryWithBackup();
+//        dateTimeFormaterTest();
+        checkAndUpdateInventoryWithBackup();
     }
 
     private static void checkAndUpdateInventoryWithBackup() {
@@ -52,7 +52,7 @@ public class LocalTest {
             HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(false);
             int i=0;
             for(String key:map.keySet()){
-                System.out.println(i+++" "+key+" : "+map.get(key).getLotInfoDbEntry());
+                System.out.println(i+++" "+key+" : "+map.get(key).getFrom()+" , "+map.get(key).getTo());
             }
             LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
             

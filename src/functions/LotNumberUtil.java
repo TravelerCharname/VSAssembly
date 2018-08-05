@@ -54,7 +54,7 @@ public class LotNumberUtil {
         return dest;
     }
 
-    public static final String INSERT_FIELDS = " (`product`,`lot_number`,`total`,`assembled`,`approved`,`failed`,`finished`,`test`,`testing`,`scanning`,`last_modified`) ";
+    public static final String INSERT_FIELDS = " (`product`,`lot_number`,`from`,`to`,`total`,`assembled`,`approved`,`failed`,`finished`,`test`,`testing`,`scanning`,`last_modified`) ";
 
     /*
     create lot info table
@@ -97,6 +97,8 @@ public class LotNumberUtil {
             values = lot.getLotInfoDbEntry();
             sql = "INSERT INTO " + schema + ".lotinfo " + INSERT_FIELDS + " VALUES" + values
                     + "on duplicate key update "
+                    + "`from`=values(`from`),"
+                    + "`to`=values(`to`),"
                     + "total=values(total),"
                     + "assembled=values(assembled),"
                     + "approved=values(approved),"
@@ -275,6 +277,13 @@ public class LotNumberUtil {
                     l.setLast_modified((l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
 //                System.out.println(l.getLotNumber()+" last mod set to "+(l.getLast_modified().after(p.assemble_time) ? l.getLast_modified() : p.assemble_time));
                 }
+                if (null == p.getBarcode()) {
+                    System.out.println("null barcode for " + p.pillar_plate_id);
+                } else {
+                    l.updateFrom(p.getBarcode());
+                    l.updateTo(p.getBarcode());
+                }
+//                l.autoCount();
                 map.put(key, l);
             }
         }
