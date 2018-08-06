@@ -21,7 +21,7 @@ public class PillarPlateInfo {
     public String plate_type;
     public String chip_layout_type;
     public String test_name;
-    public java.sql.Date assemble_time;
+    public java.util.Date assemble_time;
     public Status status;
     
     // left NULL

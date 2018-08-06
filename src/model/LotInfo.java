@@ -33,7 +33,7 @@ public class LotInfo {
     private AssayBarcode to;
     
     private ArrayList<PillarPlateInfo> plates;
-    private java.sql.Date last_modified;
+    private java.util.Date last_modified;
 
     public LotInfo() {
     }
@@ -181,11 +181,11 @@ public class LotInfo {
         return testing;
     }
 
-    public Date getLast_modified() {
+    public java.util.Date getLast_modified() {
         return last_modified;
     }
 
-    public void setLast_modified(java.sql.Date last_modified) {
+    public void setLast_modified(java.util.Date last_modified) {
         if(null==last_modified) System.out.println("last modified set Null");
         this.last_modified = last_modified;
     }

@@ -57,14 +57,14 @@ public class TaskSchedule extends Application {
 
         try {
             //        lotinfotableinitdemo();
-            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(false);
+            HashMap<String, LotInfo> map = LotNumberUtil.getAllNonTestLot(true);
 //            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
-            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), false);
+            LotNumberUtil.batchInsertUpdateLotinfo(map.values(), true);
             for (Product p : Product.values()) {
                 if (p.equals(Product.TST)) {
                     continue;
                 }
-                LotNumberUtil.getLatestLofInfoCount(p, false);
+                LotNumberUtil.getLatestLofInfoCount(p, true);
             }
         } catch (SQLException ex) {
             Logger.getLogger(TaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
@@ -156,11 +156,11 @@ public class TaskSchedule extends Application {
                 if (lot.getAssembled() < MIN_REQUIRE_QUANT) {
                     header = p.prefix;
                     info = lot.getLotInfoLogEntry();
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Plate inventory is low!");
-                    alert.setHeaderText(header);
-                    alert.setContentText(info);
-                    alert.showAndWait();
+//                    Alert alert = new Alert(AlertType.INFORMATION);
+//                    alert.setTitle("Plate inventory is low!");
+//                    alert.setHeaderText(header);
+//                    alert.setContentText(info);
+//                    alert.showAndWait();
                 } else {
                     System.out.println(lot.getLotInfoDbEntry());
                 }
