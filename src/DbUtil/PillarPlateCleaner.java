@@ -56,31 +56,59 @@ public class PillarPlateCleaner {
     public static ArrayList<PillarPlateInfo> getAllPlatesForProduct(boolean isLocal) throws SQLException {
         String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
 
-        String sql = "SELECT * FROM " + schema + ".pillar_plate_info order by assemble_time;";
+        String sql = "SELECT * FROM " + schema + ".pillar_plate_info order by assemble_time,pillar_plate_id;";
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
 
         ArrayList<PillarPlateInfo> plates = PillarPlateInfo.plateListFromDB(r);
         ArrayList<LotInfo> al=new ArrayList<>();
         
-        Date curr_time=Date.from(Instant.parse("2007-01-01")),time;
-        LotInfo curr;
+        Date curr_lot_time=Date.from(Instant.parse("2007-01-01")),plate_time;
+        LotInfo curr_lot = null;
         for(PillarPlateInfo plate:plates){
             Product product = plate.getBarcode().getProduct();
             if(null==product||Product.TST.equals(product)) continue;
             
-            time = plate.assemble_time;
-            // |time-curr_time|=time-curr_time>1d 
-            /// => new batchinsert and reset curr_time & curr
-            // |time-curr_time|=time-curr_time<1d
+            plate_time = plate.assemble_time;
+            if(null==curr_lot){
+                curr_lot=new LotInfo(product, plate.getBarcode().lotNumber, new ArrayList<PillarPlateInfo>());
+                curr_lot.getPlates().add(plate);
+            }
+            // |time-curr_lot_time|=time-curr_lot_time>1d 
+            /// => new batchinsert and reset curr_lot_time & curr_lot
+            // |time-curr_lot_time|=time-curr_lot_time<1d
             /// same prod
-            //// curr.plates.add(plate)
+            //// curr_lot.plates.add(plate)
             
             /// diff prod
-            //// => new batchinsert and reset curr_time & curr
+            //// => new batchinsert and reset curr_lot_time & curr_lot
         }
 
         // insert lot + plate
         // prod lot from(pk) barcode prod plot pbatch pplateid passemble time
         return plates;
+    }
+    
+    //product, lot number, from, barcode, prefix, lot, batch, plate id, assembled
+    LotInfo newLotWithPlate(PillarPlateInfo plate){
+        if(null==plate) return null;
+        LotInfo lot=new LotInfo(plate.getBarcode().getProduct(), plate.getBarcode().lotNumber, new ArrayList<PillarPlateInfo>());
+        return lot;
+    }
+    LotInfo newLotWithPlate(PillarPlateInfo plate,Product prod){
+        if(null==plate) return null;
+        LotInfo lot=new LotInfo(prod, plate.getBarcode().lotNumber, new ArrayList<PillarPlateInfo>());
+        return lot;
+    }
+    
+    
+    
+    class LotInfoExt extends LotInfo{
+        public java.util.Date establish;
+        void addPlateToLot(LotInfo lot,PillarPlateInfo plate){
+//update est       
+//if(null==this.establish)
+
+//insert plate
+    }
     }
 }
