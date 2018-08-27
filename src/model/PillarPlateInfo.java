@@ -6,9 +6,10 @@
 package model;
 
 import functions.DocDateUtil;
-import java.sql.Date;
+//import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +37,7 @@ public class PillarPlateInfo {
 //    private String plateId;
     
     public PillarPlateInfo(String pillar_plate_id, String inventory_barcode, String plate_type, String chip_layout_type, String test_name, 
-            java.sql.Date assemble_time, String status, String plate_seq_num, String TSP, String well_plate_id) {
+            java.util.Date assemble_time, String status, String plate_seq_num, String TSP, String well_plate_id) {
         this.pillar_plate_id = filter_trim(pillar_plate_id);
         this.inventory_barcode = filter_trim(inventory_barcode);
         this.plate_type = filter_trim(plate_type);
@@ -58,7 +59,7 @@ public class PillarPlateInfo {
         int i=0;
         while(rs.next()){
             add=new PillarPlateInfo(rs.getString("pillar_plate_id"), rs.getString("inventory_barcode"), rs.getString("plate_type"), rs.getString("chip_layout_type"),rs.getString("test_name"), 
-                    rs.getDate("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
+                    rs.getTimestamp("assemble_time"),rs.getString("status"), rs.getString("plate_seq_num"),rs.getString("TSP"), rs.getString("well_plate_id"));
             add.init();
 //            System.out.println(add.status);
 //            System.out.println(add);
