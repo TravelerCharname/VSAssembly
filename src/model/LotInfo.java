@@ -150,6 +150,7 @@ public class LotInfo {
     }
 
     public ArrayList<PillarPlateInfo> getPlates() {
+        if(null==plates) plates=new ArrayList<>();
         return plates;
     }
 
