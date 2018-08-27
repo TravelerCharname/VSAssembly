@@ -177,6 +177,7 @@ public class PillarPlateCleaner {
     }
     
     //date and time!
+    //hash plate and set hash as pk
     public static String getLotInfoDbEntry(LotInfo aLot,PillarPlateInfo plate) {
 //        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
         return "('"+aLot.getProd().plateName + "','" +aLot.getLotNumber() + "','" +((LotInfoExt)aLot).establish+ "','" +aLot.getFrom()+ "','" + plate.getBarcode().getProduct().prefix+ "','" + plate.getBarcode().lotNumber+  "','" + plate.getBarcode().batchNumber+ "','"  + plate.getBarcode().plateId + "','" +plate.assemble_time+"')";
