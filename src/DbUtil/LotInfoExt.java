@@ -15,7 +15,6 @@ import model.Product;
  * @author lm
  */
 public class LotInfoExt extends LotInfo {
-//wotamajiubuxinle
         public java.util.Date establish;
 
         public LotInfoExt(Product prod, String lotNumber, ArrayList<PillarPlateInfo> plates) {
