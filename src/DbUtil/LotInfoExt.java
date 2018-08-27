@@ -29,5 +29,6 @@ public class LotInfoExt extends LotInfo {
             }
 //insert plate
             this.getPlates().add(plate);
+            this.updateFrom(plate.getBarcode());
         }
     }
