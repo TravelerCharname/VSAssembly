@@ -35,7 +35,7 @@ public class PillarPlateCleaner {
      */
     public static void main(String[] args) throws SQLException {
         // TODO code application logic here
-        ArrayList<LotInfo> al = getAllPlatesForProduct(true);
+        ArrayList<LotInfo> al = getAllPlatesForProduct(false);
 //        show(al);
         
         batchInsertUpdateLotinfo(al, true);
@@ -92,8 +92,10 @@ public class PillarPlateCleaner {
 /// |time-curr_lot_time|=time-curr_lot_time<1d
 //// curr_lot.plates.add(plate)
             if (curr_lot.getProd().equals(product)) {
-                if (curr_lot_time.getDay() == plate_time.getDay()) {
+                if (curr_lot_time.getDate()== plate_time.getDate()&&curr_lot_time.getMonth()== plate_time.getMonth()&&curr_lot_time.getYear()== plate_time.getYear()) {
                     curr_lot.addPlateToLot(plate);
+                    
+                    System.out.println("lot est@ "+curr_lot_time+"\tplate assembled@ "+plate_time);
                 }
                 continue;
             }
@@ -102,15 +104,12 @@ public class PillarPlateCleaner {
 /// diff prod
 
             //// => new batchinsert and reset curr_lot_time & curr_lot
-            
+            al.add(curr_lot);System.out.println("add curr to list @"+curr_lot.establish+" "+curr_lot.getProd().prefix);  
             curr_lot = newLotWithPlate(plate);
             curr_lot.addPlateToLot(plate);
-            curr_lot_time = plate_time;
-            al.add(curr_lot);
-
-        System.out.println("add curr to list @"+curr_lot.establish+" "+curr_lot.getProd().prefix);          
+            curr_lot_time = plate_time;      
         }
-        
+        al.add(curr_lot);System.out.println("add curr to list @"+curr_lot.establish+" "+curr_lot.getProd().prefix);   
         // insert lot + plate
         // prod lot from(pk) barcode prod plot pbatch pplateid passemble time
         return al;
@@ -146,7 +145,7 @@ public class PillarPlateCleaner {
     /*
     insert on duplicate update, return the number of rows affected
      */
-    private static String INSERT_FIELDS =" (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
+    private static String INSERT_FIELDS =" (`product` , `lot number` , `from` , `barcode` , `assay barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
 
     public static int batchInsertUpdateLotinfo(Collection<LotInfo> collection, boolean isLocal) {
         String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
@@ -162,6 +161,7 @@ public class PillarPlateCleaner {
                     + "`lot number`=values(`lot number`),"
                     + "`from`=values(`from`),"
                     + "`barcode`=values(`barcode`),"
+                    + "`assay barcode`=values(`assay barcode`),"
                     + "`prefix`=values(`prefix`),"
                     + "`lot`=values(`lot`),"
                     + "`batch`=values(`batch`),"
@@ -180,6 +180,6 @@ public class PillarPlateCleaner {
     //hash plate and set hash as pk
     public static String getLotInfoDbEntry(LotInfo aLot,PillarPlateInfo plate) {
 //        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
-        return "('"+aLot.getProd().plateName + "','" +aLot.getLotNumber() + "','" +((LotInfoExt)aLot).establish+ "','" +aLot.getFrom()+ "','" + plate.getBarcode().getProduct().prefix+ "','" + plate.getBarcode().lotNumber+  "','" + plate.getBarcode().batchNumber+ "','"  + plate.getBarcode().plateId + "','" +plate.assemble_time+"')";
+        return "('"+aLot.getProd().plateName + "','" +aLot.getLotNumber() + "','" +((LotInfoExt)aLot).establish+ "','" +aLot.getFrom()+ "','" + plate.pillar_plate_id+ "','" + plate.getBarcode().getProduct().prefix+ "','" + plate.getBarcode().lotNumber+  "','" + plate.getBarcode().batchNumber+ "','"  + plate.getBarcode().plateId + "','" +plate.assemble_time+"')";
     }
 }

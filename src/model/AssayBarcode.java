@@ -96,7 +96,7 @@ public class AssayBarcode {
             inner:
             for (Pattern pattern : P_ILLEGAL_STRING) {
                 if (pattern.matcher(pillarPlateBarcode).find()) {
-                    System.out.println("found "+pattern.pattern()+" in "+pillarPlateBarcode+"...........");
+//                    System.out.println("found "+pattern.pattern()+" in "+pillarPlateBarcode+"...........");
                     break outer;
                 }
             }
@@ -154,7 +154,7 @@ public class AssayBarcode {
 
     public Product getProduct() {
         Product luk = Product.lookupByNameOrPartNumberOrSOP(namePrefix);
-        if(null==luk) System.out.println("can't find product for name: "+namePrefix+lotNumber+batchNumber+plateId);
+//        if(null==luk) System.out.println("can't find product for name: "+namePrefix+lotNumber+batchNumber+plateId);
         return Product.lookupByNameOrPartNumberOrSOP(namePrefix);
     }
 
