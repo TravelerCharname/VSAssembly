@@ -29,6 +29,7 @@ import model.Product;
  */
 public class PillarPlateCleaner {
 
+    //barcode -> parse lot number -> check assembled time -> check chip id
     
     /**
      * @param args the command line arguments
