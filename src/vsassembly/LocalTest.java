@@ -106,20 +106,20 @@ System.out.println("barcode: "+demo.getBarcode());
             ArrayList<PillarPlateInfo> plates = LotNumberUtil.getAllPlatesForProduct(Product.CEL, true);
             String key;
             LotInfo l;
-            for (PillarPlateInfo p : plates) {
-                key = p.blindLotNumber();
-                l = map.get(key);
-                if (null == l) {
-                    l = new LotInfo(Product.CEL, key, new ArrayList<>());
-                }
-                l.getPlates().add(p);
-                map.put(key, l);
-            }
+//            for (PillarPlateInfo p : plates) {
+//                key = p.blindLotNumber();
+//                l = map.get(key);
+//                if (null == l) {
+//                    l = new LotInfo(Product.CEL, key, new ArrayList<>());
+//                }
+//                l.getPlates().add(p);
+//                map.put(key, l);
+//            }
 
             for (LotInfo lot : map.values()) {
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
 
-                lot.isConsistent();
+//                lot.isConsistent();
                 lot.autoCount();
                 System.out.println("lot num: " + lot.getLotNumber());
                 System.out.println(lot.getLotInfoLogEntry());

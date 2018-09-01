@@ -83,18 +83,21 @@ public class PillarPlateInfo {
     }
 
     
-    
-    public String blindLotNumber(){
-        String s = pillar_plate_id.toUpperCase(); if(null==s) System.out.println("s null");
-       Product product = barcode.getProduct();
-// if(null==product){
-//            System.out.println("null product 4 "+s); return null;
-//        }
-            s = s.replaceFirst(product.prefix,"");
-            s=s.substring(0,3);
-            System.out.println(pillar_plate_id+" => "+s);
-            return s;
-    }
+    /*
+    1. remove plate prefix
+    2. return the first 3 characters as "blind lot number"
+    */
+//    public String blindLotNumber(){
+//        String s = pillar_plate_id.toUpperCase(); if(null==s) System.out.println("s null");
+//       Product product = barcode.getProduct();
+//// if(null==product){
+////            System.out.println("null product 4 "+s); return null;
+////        }
+//            s = s.replaceFirst(product.prefix,"");
+//            s=s.substring(0,3);
+//            System.out.println(pillar_plate_id+" => "+s);
+//            return s;
+//    }
     
     private boolean init(){
         this.barcode=AssayBarcode.instanceFromBarcode(pillar_plate_id);

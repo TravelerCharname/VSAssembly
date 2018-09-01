@@ -234,15 +234,15 @@ public class LotInfo {
         }
     }
     
-    public boolean isConsistent(){
-        for(PillarPlateInfo p:plates){
-            if(!p.blindLotNumber().equals(lotNumber)){
-                System.out.println("inconsistent plate: "+p);
-                return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isConsistent(){
+//        for(PillarPlateInfo p:plates){
+//            if(!p.blindLotNumber().equals(lotNumber)){
+//                System.out.println("inconsistent plate: "+p);
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
     public void autoCount() {   //Collection<PillarPlateInfo> plates
         for (PillarPlateInfo p : plates) {
             switch (p.status) {
