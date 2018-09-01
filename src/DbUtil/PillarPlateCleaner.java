@@ -35,10 +35,15 @@ public class PillarPlateCleaner {
      */
     public static void main(String[] args) throws SQLException {
         // TODO code application logic here
-        ArrayList<LotInfo> al = getAllPlatesForProduct(false);
-//        show(al);
+        ArrayList<PillarPlateInfoExt> pes = getAllPlateExts(false);
+        for(PillarPlateInfoExt pe:pes){
+            System.out.println(pe);
+        }
         
-        batchInsertUpdateLotinfo(al, true);
+//        ArrayList<LotInfo> al = getLotInfoList(false);
+////        show(al);
+//        
+//        batchInsertUpdateLotinfo(al, true);
     }
 
     /*
@@ -58,7 +63,7 @@ public class PillarPlateCleaner {
         //               -> diff -> break/new check point
     }
 
-    public static ArrayList<LotInfo> getAllPlatesForProduct(boolean isLocal) throws SQLException {
+    public static ArrayList<LotInfo> getLotInfoList(boolean isLocal) throws SQLException {
         String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
 
         String sql = "SELECT * FROM " + schema + ".pillar_plate_info order by assemble_time,pillar_plate_id;";
@@ -113,6 +118,18 @@ public class PillarPlateCleaner {
         // insert lot + plate
         // prod lot from(pk) barcode prod plot pbatch pplateid passemble time
         return al;
+    }
+    
+    public static ArrayList<PillarPlateInfoExt> getAllPlateExts(boolean isLocal) throws SQLException {
+        String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
+
+        String sql = "SELECT * FROM " + schema + ".`pillar_info` pp, " + schema + ".`pillar_plate_info` ppi"
+                + " WHERE pp.`pillar_plate_id`=ppi.`pillar_plate_id` group by ppi.pillar_plate_id order by ppi.assemble_time, ppi.pillar_plate_id;";
+        ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
+
+        ArrayList<PillarPlateInfoExt> plates = PillarPlateInfoExt.plateExtListFromDB(r);
+        
+        return plates;
     }
 
     //product, lot number, from, barcode, prefix, lot, batch, plate id, assembled

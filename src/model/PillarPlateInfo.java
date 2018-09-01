@@ -48,6 +48,8 @@ public class PillarPlateInfo {
         this.plate_seq_num = filter_trim(plate_seq_num);
         this.TSP = TSP;
         this.well_plate_id = filter_trim(well_plate_id);
+        
+        this.init();
     }
     private String filter_trim(String fromDB){
         return (fromDB==null?null:fromDB.trim());
