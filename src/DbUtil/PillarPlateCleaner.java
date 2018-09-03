@@ -200,4 +200,6 @@ public class PillarPlateCleaner {
 //        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
         return "('"+aLot.getProd().plateName + "','" +aLot.getLotNumber() + "','" +((LotInfoExt)aLot).establish+ "','" +aLot.getFrom()+ "','" + plate.pillar_plate_id+ "','" + plate.getBarcode().getProduct().prefix+ "','" + plate.getBarcode().lotNumber+  "','" + plate.getBarcode().batchNumber+ "','"  + plate.getBarcode().plateId + "','" +plate.assemble_time+"')";
     }
+    
+    
 }
