@@ -5,6 +5,7 @@
  */
 package vsassembly;
 
+import DbUtil.PillarPlateInfoExt;
 import exceptions.InvalidAssayBarcodeException;
 import functions.LotNumberUtil;
 import functions.PrimitiveConn;
@@ -42,7 +43,8 @@ public class LocalTest {
      */
     public static void main(String[] args) {
 //        dateTimeFormaterTest();
-        checkAndUpdateInventoryWithBackup();
+onePlateTest();
+//        checkAndUpdateInventoryWithBackup();
     }
 
     private static void checkAndUpdateInventoryWithBackup() {
@@ -77,7 +79,7 @@ public class LocalTest {
             PillarPlateInfo demo=plates.get(0);
             //check plate type
 //            System.out.println("demo type = "+demo.plate_type);
-//            System.out.println("demo: "+demo);
+            System.out.println("demo: "+((PillarPlateInfoExt)demo).wafer_id);
 
 System.out.println("barcode: "+demo.getBarcode());
 //debug

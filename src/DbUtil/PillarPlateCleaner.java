@@ -30,17 +30,16 @@ import model.Product;
 public class PillarPlateCleaner {
 
     //barcode -> parse lot number -> check assembled time -> check chip id
-    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
         // TODO code application logic here
         ArrayList<PillarPlateInfoExt> pes = getAllPlateExts(false);
-        for(PillarPlateInfoExt pe:pes){
+        for (PillarPlateInfoExt pe : pes) {
             System.out.println(pe);
         }
-        
+
 //        ArrayList<LotInfo> al = getLotInfoList(false);
 ////        show(al);
 //        
@@ -90,7 +89,7 @@ public class PillarPlateCleaner {
                 curr_lot_time = plate_time;
 
                 al.add(curr_lot);
-                System.out.println("add curr to list @"+plate_time+" "+product.prefix);
+                System.out.println("add curr to list @" + plate_time + " " + product.prefix);
                 continue;
             }
 
@@ -98,10 +97,10 @@ public class PillarPlateCleaner {
 /// |time-curr_lot_time|=time-curr_lot_time<1d
 //// curr_lot.plates.add(plate)
             if (curr_lot.getProd().equals(product)) {
-                if (curr_lot_time.getDate()== plate_time.getDate()&&curr_lot_time.getMonth()== plate_time.getMonth()&&curr_lot_time.getYear()== plate_time.getYear()) {
+                if (curr_lot_time.getDate() == plate_time.getDate() && curr_lot_time.getMonth() == plate_time.getMonth() && curr_lot_time.getYear() == plate_time.getYear()) {
                     curr_lot.addPlateToLot(plate);
-                    
-                    System.out.println("lot est@ "+curr_lot_time+"\tplate assembled@ "+plate_time);
+
+                    System.out.println("lot est@ " + curr_lot_time + "\tplate assembled@ " + plate_time);
                 }
                 continue;
             }
@@ -110,17 +109,19 @@ public class PillarPlateCleaner {
 /// diff prod
 
             //// => new batchinsert and reset curr_lot_time & curr_lot
-            al.add(curr_lot);System.out.println("add curr to list @"+curr_lot.establish+" "+curr_lot.getProd().prefix);  
+            al.add(curr_lot);
+            System.out.println("add curr to list @" + curr_lot.establish + " " + curr_lot.getProd().prefix);
             curr_lot = newLotWithPlate(plate);
             curr_lot.addPlateToLot(plate);
-            curr_lot_time = plate_time;      
+            curr_lot_time = plate_time;
         }
-        al.add(curr_lot);System.out.println("add curr to list @"+curr_lot.establish+" "+curr_lot.getProd().prefix);   
+        al.add(curr_lot);
+        System.out.println("add curr to list @" + curr_lot.establish + " " + curr_lot.getProd().prefix);
         // insert lot + plate
         // prod lot from(pk) barcode prod plot pbatch pplateid passemble time
         return al;
     }
-    
+
     public static ArrayList<PillarPlateInfoExt> getAllPlateExts(boolean isLocal) throws SQLException {
         String schema = (isLocal ? LOCAL_SCHEMA : VIBRANT_TEST_TRACKING);
 
@@ -129,7 +130,7 @@ public class PillarPlateCleaner {
         ResultSet r = PrimitiveConn.generateRecordThrows(schema, sql, isLocal);
 
         ArrayList<PillarPlateInfoExt> plates = PillarPlateInfoExt.plateExtListFromDB(r);
-        
+
         return plates;
     }
 
@@ -150,20 +151,24 @@ public class PillarPlateCleaner {
         return lot;
     }
 
-    static void show(ArrayList<LotInfo> al){
-        if(null==al) return;
+    static void show(ArrayList<LotInfo> al) {
+        if (null == al) {
+            return;
+        }
         ListIterator<LotInfo> it = al.listIterator();
-        LotInfo lot; int i=0;
-        while(it.hasNext()){
+        LotInfo lot;
+        int i = 0;
+        while (it.hasNext()) {
             lot = it.next();
-            System.out.println(i+++"\t"+((LotInfoExt) lot).establish+"\t"+lot.getProd().prefix+"\t"+lot.getLotNumber());
+            System.out.println(i++ + "\t" + ((LotInfoExt) lot).establish + "\t" + lot.getProd().prefix + "\t" + lot.getLotNumber());
         }
     }
-    
+
     /*
     insert on duplicate update, return the number of rows affected
      */
-    private static String INSERT_FIELDS =" (`product` , `lot number` , `from` , `barcode` , `assay barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
+    private static String INSERT_FIELDS = " (`product` , `lot number` , `from` , `barcode` , `assay barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
+    private static String INSERT_FIELDS_EXT = " (`product` , `lot number` , `from` , `barcode` , `assay barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`, `wafer_id`) ";
 
     public static int batchInsertUpdateLotinfo(Collection<LotInfo> collection, boolean isLocal) {
         String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
@@ -171,22 +176,82 @@ public class PillarPlateCleaner {
         int count = 0, updateRecordThrows;
         for (LotInfo lot : collection) {
             lot.autoCount();
-            for(PillarPlateInfo plate:lot.getPlates()){
-            values = getLotInfoDbEntry(lot, plate);
-            sql = "INSERT INTO " + schema + ".plate_info_cleaner " + INSERT_FIELDS + " VALUES" + values
-                    + "on duplicate key update "
-                    + "`product`=values(`product`),"
-                    + "`lot number`=values(`lot number`),"
-                    + "`from`=values(`from`),"
-                    + "`barcode`=values(`barcode`),"
-                    + "`assay barcode`=values(`assay barcode`),"
-                    + "`prefix`=values(`prefix`),"
-                    + "`lot`=values(`lot`),"
-                    + "`batch`=values(`batch`),"
-                    + "`plate id`=values(`plate id`),"
-                    + "`assembled`=values(`assembled`);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+            for (PillarPlateInfo plate : lot.getPlates()) {
+                values = getLotInfoDbEntry(lot, plate);
+                sql = "INSERT INTO " + schema + ".plate_info_cleaner " + INSERT_FIELDS + " VALUES" + values
+                        + "on duplicate key update "
+                        + "`product`=values(`product`),"
+                        + "`lot number`=values(`lot number`),"
+                        + "`from`=values(`from`),"
+                        + "`barcode`=values(`barcode`),"
+                        + "`assay barcode`=values(`assay barcode`),"
+                        + "`prefix`=values(`prefix`),"
+                        + "`lot`=values(`lot`),"
+                        + "`batch`=values(`batch`),"
+                        + "`plate id`=values(`plate id`),"
+                        + "`assembled`=values(`assembled`);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
 //            System.out.println("updating " + lot.getProd() + " lot " + lot.getLotNumber());
-            updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+                updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
+            }
+//            System.out.println(updateRecordThrows + " rows affected");
+//            count += updateRecordThrows;
+        }
+        return count;
+    }
+
+    //date and time!
+    //hash plate and set hash as pk
+    public static String getLotInfoDbEntry(LotInfo aLot, PillarPlateInfo plate) {
+//        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
+        return "('" + aLot.getProd().plateName + "','" + aLot.getLotNumber() + "','" + ((LotInfoExt) aLot).establish + "','" + aLot.getFrom() + "','" + plate.pillar_plate_id + "','" + plate.getBarcode().getProduct().prefix + "','" + plate.getBarcode().lotNumber + "','" + plate.getBarcode().batchNumber + "','" + plate.getBarcode().plateId + "','" + plate.assemble_time + "')";
+    }
+
+    //date and time!
+    //hash plate and set hash as pk
+    public static String getLotInfoDbEntry(LotInfo aLot, PillarPlateInfoExt plateExt) {
+//        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
+        return "('" + aLot.getProd().plateName + "','" + aLot.getLotNumber() + "','" + ((LotInfoExt) aLot).establish + "','" + aLot.getFrom() + "','" + plateExt.pillar_plate_id + "','" + plateExt.getBarcode().getProduct().prefix + "','" + plateExt.getBarcode().lotNumber + "','" + plateExt.getBarcode().batchNumber + "','" + plateExt.getBarcode().plateId + "','" + plateExt.assemble_time + "','" + plateExt.wafer_id + "')";
+    }
+
+    public static int insertOnDuplicatePlateIdUpdatePillarPlateInfoExt(Collection<LotInfo> collection, boolean isLocal) {
+        String schema = (isLocal ? LOCAL_SCHEMA : ASSEMBLE_SCH);
+        String sql, values;
+        int count = 0, updateRecordThrows;
+        for (LotInfo lot : collection) {
+            lot.autoCount();
+            for (PillarPlateInfo plate : lot.getPlates()) {
+                if (plate instanceof PillarPlateInfoExt) {
+                    values = getLotInfoDbEntry(lot, (PillarPlateInfoExt) plate);
+                    sql = "INSERT INTO " + schema + ".plate_info_cleaner " + INSERT_FIELDS + " VALUES" + values
+                            + "on duplicate key update "
+                            + "`product`=values(`product`),"
+                            + "`lot number`=values(`lot number`),"
+                            + "`from`=values(`from`),"
+                            + "`barcode`=values(`barcode`),"
+                            + "`assay barcode`=values(`assay barcode`),"
+                            + "`prefix`=values(`prefix`),"
+                            + "`lot`=values(`lot`),"
+                            + "`batch`=values(`batch`),"
+                            + "`plate id`=values(`plate id`),"
+                            + "`assembled`=values(`assembled`),"
+                            + "`wafer_id`=values(`wafer_id`);";
+                } else {
+                    values = getLotInfoDbEntry(lot, plate);
+                    sql = "INSERT INTO " + schema + ".plate_info_cleaner " + INSERT_FIELDS + " VALUES" + values
+                            + "on duplicate key update "
+                            + "`product`=values(`product`),"
+                            + "`lot number`=values(`lot number`),"
+                            + "`from`=values(`from`),"
+                            + "`barcode`=values(`barcode`),"
+                            + "`assay barcode`=values(`assay barcode`),"
+                            + "`prefix`=values(`prefix`),"
+                            + "`lot`=values(`lot`),"
+                            + "`batch`=values(`batch`),"
+                            + "`plate id`=values(`plate id`),"
+                            + "`assembled`=values(`assembled`);"; //"; + " ON DUPLICATE KEY UPDATE `name` = VALUES(name)
+                }
+//            System.out.println("updating " + lot.getProd() + " lot " + lot.getLotNumber());
+                updateRecordThrows = PrimitiveConn.updateRecordThrows(schema, sql, isLocal);
             }
 //            System.out.println(updateRecordThrows + " rows affected");
 //            count += updateRecordThrows;
@@ -194,12 +259,5 @@ public class PillarPlateCleaner {
         return count;
     }
     
-    //date and time!
-    //hash plate and set hash as pk
-    public static String getLotInfoDbEntry(LotInfo aLot,PillarPlateInfo plate) {
-//        " (`product` , `lot number` , `from` , `barcode` , `prefix` , `lot` , `batch` , `plate id` , `assembled`) ";
-        return "('"+aLot.getProd().plateName + "','" +aLot.getLotNumber() + "','" +((LotInfoExt)aLot).establish+ "','" +aLot.getFrom()+ "','" + plate.pillar_plate_id+ "','" + plate.getBarcode().getProduct().prefix+ "','" + plate.getBarcode().lotNumber+  "','" + plate.getBarcode().batchNumber+ "','"  + plate.getBarcode().plateId + "','" +plate.assemble_time+"')";
-    }
-    
-    
+    // list<PillarPlateInfoExt> => LotInfoExt
 }
